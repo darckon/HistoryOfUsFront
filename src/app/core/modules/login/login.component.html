@@ -45,50 +45,6 @@
           </form>
         </div>
       </mat-step>
-      <mat-step *ngIf="displayInstitutions" aria-label [stepControl]="institutionFormGroup">
-        <ng-template matStepLabel>Seleccionar institución</ng-template>
-        <div *ngIf="!userIsLogged" style="text-align: center;color:red;">
-          Debe seleccionar una institución para seleccionar un perfil.
-        </div>
-        <div *ngIf="userIsLogged" class="step-card">
-          <form [formGroup]="institutionFormGroup" (ngSubmit)="institutionLoginFormGroupSubmit(stepper)">
-            <mat-form-field class="full-width">
-              <mat-label>Institución</mat-label>
-              <mat-select formControlName="institutionControl" name="institution" required>
-                <mat-option *ngFor="let ins of intitutionList" [value]="ins.id">
-                  <b>{{ins.name}}</b>
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="institutionFormGroup.controls['institutionControl'].hasError('required')">
-                Se debe seleccionar una institución <strong>obligatoriamente</strong>
-              </mat-error>
-            </mat-form-field>
-            <div>
-              <button mat-stroked-button class="full-width" color="primary" type="submit">
-                <mat-icon>check</mat-icon> Seleccionar institución
-              </button>
-            </div>
-          </form>
-        </div>
-      </mat-step>
-      <mat-step aria-label>
-        <ng-template matStepLabel>Seleccionar perfil</ng-template>
-        <div *ngIf="selectedInstitution">
-          <mat-list dense>
-            <mat-list-item *ngFor="let profile of profileList">
-              <button mat-stroked-button class="login-button full-width"
-                (click)="profileLoginFormGroupSubmit(profile.profile_id)" style="margin-top: 10px;" color="primary"
-                type="submit">
-                <mat-icon>perm_identity</mat-icon>{{profile.profile_name}}
-              </button>
-            </mat-list-item>
-          </mat-list>
-        </div>
-        <p *ngIf="!selectedInstitution && intitutionList.length > 1" style="text-align: center;color:red;">
-          <mat-icon [color]="warn">error</mat-icon>
-          Debe seleccionar una institución para seleccionar un perfil.
-        </p>
-      </mat-step>
     </mat-vertical-stepper>
   </mat-card>
 </div>

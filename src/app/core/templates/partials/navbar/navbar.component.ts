@@ -92,57 +92,8 @@ export class NavbarComponent implements OnInit {
 
   loadView() {
     this.userIsLogged = this.userService.currentUserIsLogged();
-    this.profileIsLogged = this.userService.currentProfileIsLogged();
     if (this.userIsLogged) {
       this.currentUser = this.userService.getCurrentUserData();
-      this.currentProfileData = this.userService.getCurrentProfile();
-      this.currentInstituionData = this.userService.getCurrentInstitution();
-
-      if (this.currentUser.institution_profile[0].profiles.length > 1)
-        this.userHasMultipleProfiles = true;
-
-      if (this.currentProfileData) {
-        let menus = this.currentProfileData.menu as [];
-
-        let menuData = [];
-        console.log(menus)
-        menus.map(
-          (menu: any) => {
-            let module_name = menu.module_name;
-            let modules: ModuleInfo[] = [];
-
-            if (menu.privileges.length > 0) {
-              menu.privileges.filter((nav) => nav.is_menu_option == true).map(
-                (priv: any) => {
-
-                  modules.push(
-                    {
-                      id: priv.id,
-                      tag: priv.tag,
-                      name: priv.name,
-                      module_name: module_name,
-                      internal_url: priv.path_menu,
-                      api_url: priv.path_accion,
-                      other_data: null,
-                      icon_class: priv.icon_class
-                    });
-                });
-              if(modules.length > 0){
-                menuData.push(
-                  {
-                    module_name: module_name,
-                    tag: menu.tag,
-                    name: menu.name,
-                    modules: modules,
-                    icon_class: menu.icon_class
-                  });
-              }
-            }
-          }
-        );
-        this.menuElements = menuData;
-      }
-      this.listenLoginNotification();
     }
   }
 

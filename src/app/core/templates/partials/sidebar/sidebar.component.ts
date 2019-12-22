@@ -38,30 +38,8 @@ export class SidebarComponent implements OnInit {
 
   loadView() {
     this.userIsLogged = this.userService.currentUserIsLogged();
-    this.profileIsLogged = this.userService.currentProfileIsLogged();
     if (this.userIsLogged) {
       this.currentUser = this.userService.getCurrentUserData();
-      this.currentProfileData = this.userService.getCurrentProfile();
-
-      let menus = this.currentProfileData.menu as [];
-      let menuData = [];
-      menus.map(
-        (menu: any) => {
-          let module_name = menu.module_name;
-          let modules: ModuleInfo[] = [];
-
-
-          if (menu.privileges.length > 0) {
-            menu.privileges.filter((nav) => nav.is_menu_option == true).map(
-              (priv: any) => {
-                modules.push({ id: priv.id, tag: priv.tag, name: priv.name, module_name: module_name, internal_url: priv.path_menu, api_url: priv.path_accion, other_data: null, icon_class: priv.icon_class });
-              });
-            menuData.push({ module_name: module_name, tag: menu.tag, name: menu.name, modules: modules, icon_class: menu.icon_class });
-          }
-
-        }
-      );
-      this.menuElements = menuData;
     }
   }
 

@@ -33,48 +33,13 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.currentProfileData = this.userService.getCurrentProfile();
-    this.currentInstitution = this.userService.getCurrentUserInstitutionId();
+    
+  }
 
-    this.homeService.get_article_timeline(this.currentInstitution).subscribe(
-      (successData: any) => {
-        let data = successData.data;
-        data.map(
-          (status) => {
-            this.graphData.push(data);
-            this.type_chart = 'line';
-            this.instance_chart = 'lineChart3';
-            this.LineChart3 = this.Graphs.time_chart(this.type_chart, this.instance_chart, data[0]);
-          }
-        );
-      },
-      (errorData) => {
-      },
-      () => {
-
-      }
-    );
-
-    this.homeService.get_purchase_orders(this.currentInstitution).subscribe(
-      (successData: any) => {
-        let data = successData.data;
-        data.map(
-          (status) => {
-            this.graphData.push(data);
-            this.type_chart = 'pie';
-            this.instance_chart = 'lineChart';
-            this.LineChart = this.Graphs.pie_chart(this.type_chart, this.instance_chart, data[0]);
-          }
-        );
-      },
-      (errorData) => {
-      },
-      () => {
-
-      }
-    );
-
-    this.homeService.get_provider_ranking(this.currentInstitution).subscribe(
+  // Comenzar Historia
+  start_story()
+  {
+    this.homeService.start(this.currentInstitution).subscribe(
       (successData: any) => {
         let data = successData.data;
         data.map(
@@ -92,7 +57,5 @@ export class HomeComponent implements OnInit {
 
       }
     );
-
-
   }
 }

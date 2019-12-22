@@ -1,4 +1,0 @@
-[submodule "src/app/supplying"]
-	path = src/app/supplying
-	url = https://github.com/sistemasexpertos/front-abastecimiento-v2.git
-	branch = dev

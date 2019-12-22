@@ -5,16 +5,4 @@
       <mat-icon>home</mat-icon> <span class="nav-caption">{{ 'NAVBAR._HOME_' | translate }}</span>
     </button>
   </div>
-
-  <div mat-list-item color="primary" *ngFor="let menu of menuElements" fxLayout fxLayoutGap="15px"
-    class="navigation-items">
-    <mat-menu #appMenu="matMenu">
-      <button *ngFor="let menuItem of menu.modules" mat-menu-item (click)="goToRoute(menuItem)">
-        {{ "NAVBAR."+ menuItem.tag | translate}}
-      </button>
-    </mat-menu>
-    <button mat-button color="primary" [matMenuTriggerFor]="appMenu" class="menu-button-2">
-      <mat-icon matSuffix>reorder</mat-icon> {{ 'NAVBAR.' + menu.tag | translate}}
-    </button>
-  </div>
 </mat-nav-list>

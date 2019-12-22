@@ -6,7 +6,6 @@ import { UploadComponent } from './core/components/upload/upload.component';
 import { Ng2Rut } from 'ng2-rut';
 import { ProgressComponent } from './core/components/progress/progress.component';
 import { ProgressBarModule } from 'angular-progress-bar';
-import { UserAutocompleteComponent } from './core/modules/users/user-autocomplete/user-autocomplete.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
@@ -24,15 +23,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     [
       YesnoComponent,
       UploadComponent,
-      ProgressComponent,
-      UserAutocompleteComponent
+      ProgressComponent
     ],
   exports: [
     YesnoComponent,
     ProgressBarModule,
     UploadComponent,
-    ProgressComponent,
-    UserAutocompleteComponent
+    ProgressComponent
   ]
 })
 export class SeisModule { }

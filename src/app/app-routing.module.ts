@@ -5,14 +5,9 @@ import { HomeComponent } from './core/modules/home/home.component';
 
 import { AuthGuard } from './core/modules/guard/auth.guard';
 import { ErrorComponent } from './core/modules/error/error.component';
-import { UsersComponent } from './core/modules/users/users.component';
-import { ProfileEditComponent } from './core/modules/profiles/profile-edit/profile-edit.component';
-import { ProfileCreateComponent } from './core/modules/profiles/profile-create/profile-create.component';
-import { ProfileListComponent } from './core/modules/profiles/profile-list/profile-list.component';
 import { InstitutionDetailComponent } from './core/modules/institutions/institution-detail/institution-detail.component';
 import { NotificationsComponent } from './core/modules/notifications/notifications.component';
-import { CreateUserComponent } from './core/modules/users/create/create_user.component';
-import { UserEditComponent } from './core/modules/users/user-edit/user-edit.component';
+import { BeginComponent } from './core/modules/begin/begin.component';
 
 const routes: Routes = [
   {
@@ -39,98 +34,12 @@ const routes: Routes = [
           component: NotificationsComponent,
         },
         {
-          path: 'users',
+          path: 'begin',
           data: {
-            breadcrumb: 'Usuarios'
+            breadcrumb: 'Comenzar'
           },
-          children:
-            [
-              {
-                path: '',
-                component: UsersComponent,
-                data: {
-                  breadcrumb: 'listar usuarios'
-                },
-              },
-              {
-                path: 'create',
-                component: CreateUserComponent,
-                data: {
-                  breadcrumb: 'Crear usuario'
-                },
-              },
-              {
-                path: 'detail/:id',
-                component: UserEditComponent,
-                data: {
-                  breadcrumb: 'Editar usuario'
-                },
-              },
-            ]
+          component: BeginComponent,
         },
-        {
-          path: 'profiles',
-
-          data: {
-            breadcrumb: 'Perfiles'
-          },
-          children:
-            [
-              {
-                path: '',
-                component: ProfileListComponent,
-                data: {
-                  breadcrumb: 'Listado de perfiles'
-                },
-              },
-              {
-                path: 'detail/:id',
-                data: {
-                  breadcrumb: 'Detalle del perfil'
-                },
-                component: ProfileEditComponent,
-              },
-              {
-                path: 'create',
-                data: {
-                  breadcrumb: 'Crear perfil'
-                },
-                component: ProfileCreateComponent,
-              },
-            ]
-        },
-        {
-          path: 'institutions',
-          data: {
-            breadcrumb: 'Institución'
-          },
-          children:
-            [
-              {
-                path: 'detail',
-                data: {
-                  breadcrumb: 'Crear movimiento'
-                },
-                component: InstitutionDetailComponent,
-              },
-              {
-                path: '',
-                redirectTo: '/detail',
-                pathMatch: 'full'
-              },
-            ]
-
-        },
-        {
-          path: 'supplying',
-          data: {
-            breadcrumb: 'Abastecimiento'
-          },
-          canActivate: [AuthGuard],
-          children: [
-            { path: '', loadChildren: () => import('./supplying/supplying.module').then(m => m.SupplyingModule) },
-          ]
-        }
       ]
   },
   {

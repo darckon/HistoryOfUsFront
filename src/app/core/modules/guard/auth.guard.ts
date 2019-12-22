@@ -13,10 +13,9 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-
-    let currentProfileData = this.userService.getCurrentProfile();
-
-    if (currentProfileData) {
+    let is_loged = this.userService.currentUserIsLogged();
+    console.log('pase guardiuan')
+    if (is_loged) {
       return true;
     }
 

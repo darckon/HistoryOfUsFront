@@ -34,11 +34,6 @@ export class LayoutComponent implements OnInit {
 
   loadView()
   {
-    this.currentProfileData = this.userService.getCurrentProfile();
-    let currentUrl = this.router.url;
-    if(!this.previousRouteService.getPreviousUrl() || this.previousRouteService.getPreviousUrl() == currentUrl || currentUrl == '/' )
-      this.returnStatus = false;
-    else
       this.returnStatus = true;
   }
 
