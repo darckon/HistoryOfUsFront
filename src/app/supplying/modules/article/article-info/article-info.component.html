@@ -1,0 +1,38 @@
+<ng-template #HtmlContent>
+    <span>
+        <span *ngIf="!loaded">
+            <mat-label style="text-align: center; ">
+              <p style="color:#689FD1">
+                <mat-spinner style="margin:0 auto;" [diameter]="30"></mat-spinner>
+              </p>
+            </mat-label>
+        </span>
+    <span *ngIf="loaded && data" style="text-align: left; "> 
+          
+            <strong>{{data.name}}</strong> 
+            <br>
+            <ul style="font-size: 10px;">
+              <li *ngIf="data.description">{{data.description}}.</li>
+              <li *ngIf="data.unity">Unidad: {{data.unity.name}}.</li>
+              <li *ngIf="data.priority">Prioridad: {{data.priority.name}}.</li>
+              <li *ngIf="data.budget_item">Código item: {{data.budget_item.code}}.</li>
+              <li *ngIf="data.budget_item">Item: {{data.budget_item.name}}.</li>
+              <li *ngIf="data.is_arsenal==true">Arsenal.</li>
+              <li *ngIf="data.is_perishable==true">Perecible.</li>
+              <li *ngIf="data.is_refrigerated==true">Refrigerado.</li>
+            </ul>
+           
+         
+        </span>
+    <span *ngIf="loaded && !data" style="text-align: left; ">
+          Artículo
+        </span>
+    </span>
+
+</ng-template>
+
+<span [tooltip]="HtmlContent" placement="bottom" (events)="handleTooltipEvents($event)" show-delay="300" content-type="template" class="info-title">
+    <span *ngIf="contentMode==false && showName && name">{{name}}</span>
+<span *ngIf="contentMode==false && code"> {{code}}</span>
+<span *ngIf="contentMode==true"><ng-content></ng-content></span>
+</span>

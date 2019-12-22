@@ -1,0 +1,158 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading && dataLoaded">
+  <form [formGroup]="orderFormGroup">
+
+    <seis-movement-header [Movement]="data"></seis-movement-header>
+
+    <mat-tab-group style="min-height: 400px;">
+
+      <mat-tab *ngIf="transactions?.length">
+        <ng-template mat-tab-label>
+          <mat-icon matBadge="{{transactions?.length}}" matBadgeSize="medium">reorder</mat-icon> Articulos
+        </ng-template>
+
+        <mat-card class="inner-card">
+          <mat-card-header>
+            <mat-card-title>
+              Articulos
+            </mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+
+              <mat-card-content class="mat-header-row">
+                <button (click)="markAllAccepted()" mat-raised-button>
+                  <mat-icon>done_all</mat-icon> Aceptar todos
+                </button>
+                <button (click)="markAllRejected()" style="margin-left: 15px;" mat-raised-button>
+                  <mat-icon>clear</mat-icon>Rechazar todos
+                </button>
+              </mat-card-content>
+
+              <mat-table [class.isMobile]="isMobile" [dataSource]="dataSource" formArrayName="dispatchArray">
+
+                <ng-container cdkColumnDef="article_code">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }} </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span
+                      class="mobile-label mat-cell-title blue">{{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }}:</span>
+                    <span class="mat-cell-span">
+                      <app-article-info [id]="element.article_id" [code]="element.article_code"></app-article-info>
+                    </span>
+
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="article_name">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span
+                      class="mobile-label mat-cell-title blue">{{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}:</span>
+                    <span class="mat-cell-span">{{element.article_name}}</span>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="quantity">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._QUANTITY_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span
+                      class="mobile-label mat-cell-title blue">{{ 'SUPPLYING.ORDER._QUANTITY_' | translate }}:</span>
+                    <span class="mat-cell-span">{{element.quantity}}</span>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="actions">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._ACTIONS_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span class="mobile-label mat-cell-title blue">Aceptación:</span>
+                    <span class="mat-cell-span">
+                      <mat-radio-group style="display: block; width: 100%;" formControlName="status">
+                        <mat-radio-button value="1">Aceptado </mat-radio-button>
+                        <mat-radio-button value="2">Rechazado </mat-radio-button>
+                      </mat-radio-group>
+                    </span>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="actions2">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                  </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span class="mobile-label mat-cell-title blue"></span>
+                    <span class="mat-cell-span">
+                      <mat-error style="display: block;"
+                        *ngIf="orderFormGroup.controls['dispatchArray'].controls[rowIndex].controls['status'].hasError('required')">
+                        Campo obligatorio.
+                      </mat-error>
+                    </span>
+
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *cdkRowDef="let row;  let index = index; columns: displayedColumns;"></mat-row>
+              </mat-table>
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="inner-card">
+          <mat-card-content style="padding:15px;">
+            <span fxLayout="row">
+              <button [disabled]="transactions.length == 0 || orderFormGroup.invalid" (click)="send()"
+                style="width: 100%;" mat-raised-button color="accent">
+                <mat-icon>border_color</mat-icon> Enviar
+              </button>
+            </span>
+          </mat-card-content>
+        </mat-card>
+
+      </mat-tab>
+
+      <mat-tab *ngIf="historicDispatches?.length">
+        <ng-template mat-tab-label>
+          <mat-icon matBadge="{{historicDispatches?.length}}" matBadgeSize="medium">history</mat-icon> Artículos
+          despachados
+        </ng-template>
+
+        <span>
+          <seis-movement-dispatch-history [data]="historicDispatches"></seis-movement-dispatch-history>
+        </span>
+
+      </mat-tab>
+
+      <mat-tab *ngIf="historicalData?.length">
+        <ng-template mat-tab-label>
+          <mat-icon matBadge="{{historicalData?.length}}" matBadgeSize="medium">history</mat-icon> Historial
+        </ng-template>
+
+        <span>
+          <seis-movement-record [data]="historicalData"></seis-movement-record>
+        </span>
+
+      </mat-tab>
+
+    </mat-tab-group>
+
+  </form>
+</div>
+
+<div *ngIf="!isLoading && !dataLoaded">
+
+  <h1 style="text-align: center;">
+    <mat-icon [inline]="true">warning</mat-icon>
+  </h1>
+  <h4 style="text-align: center;">
+    Error al acceder la página solicitada.
+  </h4>
+
+</div>

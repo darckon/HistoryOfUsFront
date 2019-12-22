@@ -1,0 +1,508 @@
+<mat-card class="dashboard-card">
+  <mat-card-header class="mat-card-blue-header">
+    <mat-card-title aria-label>
+      <h2 class="blue" style="display: inline;"> {{ '_CORE_' | translate | uppercase }} | </h2>
+      <p class="light-green" style="display: inline;">
+        <mat-icon [inline]="true">user</mat-icon>{{'_CREATE_USER_' | translate | uppercase  }}
+      </p>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="dashboard-card-content">
+
+    <div *ngIf="isLoading">
+      <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && dataLoaded">
+
+      <form [formGroup]="formGroup">
+
+        <mat-card class="inner-card">
+          <mat-card-content class="mat-header-row">
+            <button (click)="clearForm()" mat-raised-button>
+              <mat-icon>replay</mat-icon> Limpiar formulario
+            </button>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="inner-card">
+          <mat-card-header>
+            <mat-card-title>
+              Usuario
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Username (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="username" matInput
+                    placeholder="Username">
+                  <mat-error *ngIf="formGroup.controls['username'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 0.7;">
+                  <mat-label>Password(*)</mat-label>
+                  <input appearance="outline" [type]="hide ? 'password' : 'text'" class="mobile-form-input"
+                    formControlName="password" matInput placeholder="password">
+                  <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  <mat-error *ngIf="formGroup.controls['password'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+                <button type="button" (click)="GeneratePassword()"
+                  style="margin:5px;margin-top:15px;flex-grow: 0.3;height: 50%;" mat-raised-button color="primary">
+                  Generar password
+                </button>
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Duración de la sesión en minutos (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="active_session_time" matInput
+                    placeholder="Duración de la sesión (*)">
+                  <mat-error *ngIf="formGroup.controls['active_session_time'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                  <mat-error *ngIf="formGroup.controls['active_session_time'].hasError('pattern')">
+                    Este campo debe ser un número
+                  </mat-error>
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Reintentos por error (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="error_password" matInput
+                    placeholder="Reintentos por error (*)">
+                  <mat-error *ngIf="formGroup.controls['error_password'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                  <mat-error *ngIf="formGroup.controls['error_password'].hasError('pattern')">
+                    Este campo debe ser un número
+                  </mat-error>
+
+                </mat-form-field>
+
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-checkbox class="margin" value="false" formControlName="can_authorize_order">
+                  Puede autorizar orden
+                </mat-checkbox>
+
+              </span>
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!--  Datos personales -->
+        <mat-card class="inner-card">
+          <mat-card-header>
+            <mat-card-title>
+              Datos personales
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Run (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="run" matInput
+                    placeholder="Run (*)">
+                  <mat-error *ngIf="formGroup.controls['run'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                  <mat-error *ngIf="formGroup.controls['run'].hasError('invalidRut')">
+                    Este campo no es un rut <strong>válido</strong>
+                  </mat-error>
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Nombre (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="name" matInput
+                    placeholder="Nombre (*)">
+                  <mat-error *ngIf="formGroup.controls['name'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Apellido paterno (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="last_name" matInput
+                    placeholder="Apellido paterno (*)">
+                  <mat-error *ngIf="formGroup.controls['last_name'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Apellido materno (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="mother_last_name" matInput
+                    placeholder="Apellido materno (*)">
+                  <mat-error *ngIf="formGroup.controls['mother_last_name'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                  <mat-label>Género(*) </mat-label>
+                  <mat-select formControlName="gender">
+
+                    <mat-option>
+                      Sin selección
+                    </mat-option>
+
+                    <mat-option selected="0" *ngFor="let gender of genders" [value]="gender">
+                      {{gender.name}}
+                    </mat-option>
+
+                  </mat-select>
+                  <mat-error *ngIf="formGroup.controls['gender']?.hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                  <mat-label>Comuna(*) </mat-label>
+                  <mat-select formControlName="commune">
+
+                    <mat-option>
+                      Sin selección
+                    </mat-option>
+
+
+                    <mat-option selected="0" *ngFor="let com of communes" [value]="com">
+                      {{com.name}}
+                    </mat-option>
+
+
+                  </mat-select>
+                  <mat-error *ngIf="formGroup.controls['commune']?.hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+
+                </mat-form-field>
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Dirección (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="address" matInput
+                    placeholder="Dirección (*)">
+                  <mat-error *ngIf="formGroup.controls['address'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Teléfono personal (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="personal_phone" matInput
+                    placeholder="Teléfono personal (*)">
+                  <mat-error *ngIf="formGroup.controls['personal_phone'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+              </span>
+
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Teléfono móvil (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="mobile_phone" matInput
+                    placeholder="Teléfono móvil (*)">
+                  <mat-error *ngIf="formGroup.controls['mobile_phone'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Email (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="email" matInput
+                    placeholder="Email (*)">
+                  <mat-error *ngIf="formGroup.controls['email'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+                  <input matInput [matDatepicker]="picker" placeholder="Fecha de nacimiento"
+                    formControlName='birthdate'>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-error *ngIf="formGroup.controls['birthdate'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+
+
+              </span>
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                  <mat-label>Nacionalidad(*) </mat-label>
+                  <mat-select formControlName="nationality">
+
+                    <mat-option>
+                      Sin selección
+                    </mat-option>
+
+
+                    <mat-option selected="0" *ngFor="let nat of nationalities" [value]="nat">
+                      {{nat.name}}
+                    </mat-option>
+
+
+                  </mat-select>
+                  <mat-error *ngIf="formGroup.controls['nationality']?.hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+
+                </mat-form-field>
+
+              </span>
+
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- PERFILES -->
+        <mat-card class="inner-card">
+          <mat-card-header>
+            <mat-card-title>
+              Perfiles
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+
+              <form [formGroup]="userProfileLocationsFormGroup">
+
+                <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                  <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                    <mat-label>Perfiles de usuario(*) </mat-label>
+                    <mat-select formControlName="userProfile">
+                      <mat-option>
+                        Sin selección
+                      </mat-option>
+                      <mat-option selected="0" *ngFor="let userProfile of userProfiles" [value]="userProfile">
+                        {{userProfile.name}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="userProfileLocationsFormGroup.controls['userProfile']?.hasError('required')">
+                      Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </span>
+
+                <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                  <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                    <mat-label>Ubicación(*) </mat-label>
+                    <mat-select multiple formControlName="location">
+                      <mat-option>Sin selección</mat-option>
+                      <mat-option selected="0" *ngFor="let location of locations" [value]="location">
+                        {{location.name}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="userProfileLocationsFormGroup.controls['location']?.hasError('required')">
+                      Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </span>
+
+                <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                  <mat-chip-list style="width: 100% !important;margin:15px;">
+
+                    <mat-chip *ngFor="let userProfile of userProfileList" selected class="mat-chip-list-stacked"
+                      (removed)="remove(userProfileList,userProfile);">
+                      <span class="info-title"
+                        style="margin-left: 15px; color: white;width:100%;">{{userProfile}} </span>
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+
+                  <button style="width: 100%;"
+                    [disabled]="userProfileLocationsFormGroup.controls['userProfile'].hasError('required')"
+                    (click)="add(userProfileLocationsList, userProfileLocationsFormGroup.value.userProfile, userProfileLocationsFormGroup.value.location)" mat-stroked-button
+                    color="primary">Agregar al listado</button>
+                </span>
+              </form>
+
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card class="inner-card" *ngIf="(userProfileLocationsList)">
+          <mat-card-header>
+            <mat-card-title>
+              Perfiles añadidos
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+    
+
+              <mat-table [class.isMobile]="isMobile" [dataSource]="dataSource" formArrayName="location_profile">
+                <ng-container cdkColumnDef="profile">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'CORE.USERS.TABLE_USERS._PROFILES_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ARTICLE_CODE_' | translate }}:</span>
+                    {{element.profile.name}}
+                    
+                  </mat-cell>
+                </ng-container>
+    
+                <ng-container cdkColumnDef="locations">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'CORE.USERS.TABLE_USERS._LOCATIONS_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                      <mat-label>Ubicación(*) </mat-label>
+                      <mat-select [(ngModel)]="element.locations" [compareWith]="equals" (selectionChange)="editlist($event.value, rowIndex)" multiple formControlName="locations">
+                        <mat-option>Sin selección</mat-option>
+                        <mat-option *ngFor="let location of locations" [value]="location" >
+                          {{location.name}}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="userProfileLocationsFormGroup.controls['location']?.hasError('required')">
+                        Este campo es <strong>obligatorio</strong>
+                      </mat-error>
+                    </mat-form-field>
+                  </mat-cell>
+                </ng-container>
+    
+                <ng-container cdkColumnDef="actions">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._ACTIONS_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ACTIONS_' | translate }}:</span>
+                    <button (click)="remove(rowIndex)" mat-button color="primary">Quitar</button>
+                  </mat-cell>
+                </ng-container>
+    
+                <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *cdkRowDef="let row;  let index = index; columns: displayedColumns;"></mat-row>
+              </mat-table>
+    
+            </div>
+          </mat-card-content>
+        </mat-card>
+        
+
+        <!-- PERFILES -->
+        <mat-card class="inner-card">
+          <mat-card-header>
+            <mat-card-title>
+              Tipos de persona
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+
+              <form [formGroup]="personTypesFormGroup">
+
+                <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                  <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                    <mat-label>Perfiles de usuario(*) </mat-label>
+                    <mat-select formControlName="personType">
+
+                      <mat-option>
+                        Sin selección
+                      </mat-option>
+
+                      <mat-option selected="0" *ngFor="let personType of personTypes" [value]="personType">
+                        {{personType.name}}
+                      </mat-option>
+
+                    </mat-select>
+                    <mat-error *ngIf="personTypesFormGroup.controls['personTypes']?.hasError('required')">
+                      Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+
+                  </mat-form-field>
+
+
+                </span>
+
+                <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                  <mat-chip-list style="width: 100% !important;margin:15px;">
+
+                    <mat-chip *ngFor="let personType of personTypeList" selected class="mat-chip-list-stacked"
+                      (removed)="remove_person(personTypeList,personType);">
+                      <span class="info-title" style="margin-left: 15px; color: white;width:100%;">{{personType.name}}
+                      </span>
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+
+                  </mat-chip-list>
+                  <button style="width: 100%;"
+                    [disabled]="personTypesFormGroup.controls['personType'].hasError('required')"
+                    (click)="add_person_type(personTypeList,personTypesFormGroup.value.personType)" mat-stroked-button
+                    color="primary">Agregar al listado</button>
+
+
+                </span>
+              </form>
+
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card class="inner-card">
+          <mat-card-content style="padding:15px;">
+            <span fxLayout="row">
+              <button [disabled]="formGroup.invalid" (click)="send()" style="width: 100%;" mat-raised-button
+                color="accent">
+                <mat-icon>border_color</mat-icon> Crear usuario
+              </button>
+            </span>
+          </mat-card-content>
+        </mat-card>
+
+      </form>
+    </div>
+
+    <div *ngIf="!isLoading && !dataLoaded">
+
+      <h1 style="text-align: center;">
+        <mat-icon [inline]="true">warning</mat-icon>
+      </h1>
+      <h4 style="text-align: center;">
+        Error al acceder la pagina solicitada.
+      </h4>
+
+    </div>
+
+  </mat-card-content>
+</mat-card>

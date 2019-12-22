@@ -1,0 +1,172 @@
+<ng-template #popoverContent style="width: 600px;">
+  <div class="title" *ngIf="!isLoading">
+    <h2 class="blue">Convenio: <span class="blue"># {{agreement_id}}</span> </h2>
+    <h3>{{typeName}}</h3>
+
+  </div>
+
+  <span *ngIf="isLoading">
+    <div class="content">
+      <mat-label style="text-align: center; ">
+        <p style="color:#689FD1">
+          <mat-spinner style="margin:0 auto;" [diameter]="30"></mat-spinner>
+        </p>
+      </mat-label>
+    </div>
+  </span>
+  <span *ngIf="!isLoading">
+    <div *ngIf="dataLoaded == true" class="content">
+
+      <mat-tab-group>
+        <mat-tab *ngIf="executionData" style="padding:5px;">
+          <ng-template mat-tab-label>
+            <mat-icon>bar_chart</mat-icon> Estadísticas
+          </ng-template>
+
+          <h4 class="blue">Porcentaje de ejecución en monto:</h4>
+          <seis-progress [progress]="executionData.agreement_amount_percent">
+          </seis-progress>
+          <h4 class="blue">Porcentaje de ejecución en cantidad:</h4>
+          <seis-progress [progress]="executionData.agreement_percent">
+          </seis-progress>
+          <h4 class="blue">Porcentaje de ejecución de la licitación:</h4>
+          <seis-progress [progress]="executionData.bidding_amount_percent">
+          </seis-progress>
+        </mat-tab>
+        <mat-tab style="padding:5px;">
+          <ng-template mat-tab-label>
+            <mat-icon>gavel</mat-icon> Multas
+          </ng-template>
+
+          <span style="margin-top:10px;">
+
+            <mat-label *ngIf="dataListLoading==true" style="text-align: center; ">
+              <p style="color:#689FD1">
+                <mat-spinner style="margin:0 auto;" [diameter]="30"></mat-spinner>
+              </p>
+            </mat-label>
+
+            <mat-table *ngIf="dataList.length>0 && dataListLoading==false" [class.isMobile]="isMobile"
+              [dataSource]="dataSource">
+
+
+              <ng-container cdkColumnDef="fine_state">
+                <mat-header-cell md-sort-header *cdkHeaderCellDef>Estado</mat-header-cell>
+                <mat-cell *cdkCellDef="let element">
+                  <p class="table-data" style="width: 90%;">
+                    <span class="mobile-label blue">Estado:</span>
+                    <b>{{element.fine_state_data?.name }}</b>
+                  </p>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container cdkColumnDef="amount">
+                <mat-header-cell md-sort-header *cdkHeaderCellDef>Monto</mat-header-cell>
+                <mat-cell *cdkCellDef="let element">
+                  <p class="table-data" style="width: 90%;">
+                    <span class="mobile-label blue">Monto:</span>
+                    <b>{{element.amount | currency:'CLP' }}</b>
+                  </p>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container cdkColumnDef="discharge_date">
+                <mat-header-cell md-sort-header *cdkHeaderCellDef>Fecha descargo</mat-header-cell>
+                <mat-cell *cdkCellDef="let element">
+                  <p class="table-data" style="width: 90%;">
+                    <span class="mobile-label blue">Fecha descargo:</span>
+                    <b>{{element.discharge_date | date:'d/M/yyyy'  }}</b>
+                  </p>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container cdkColumnDef="resolution_date">
+                <mat-header-cell md-sort-header *cdkHeaderCellDef>Fecha resolución</mat-header-cell>
+                <mat-cell *cdkCellDef="let element">
+                  <p class="table-data" style="width: 90%;">
+                    <span class="mobile-label blue">Fecha resolucion:</span>
+                    <b>{{element.resolution_date | date:'d/M/yyyy'  }}</b>
+                  </p>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container cdkColumnDef="actions">
+                <mat-header-cell md-sort-header *cdkHeaderCellDef></mat-header-cell>
+                <mat-cell *cdkCellDef="let element">
+                  <span class="mobile-label blue"><b>Opciones:</b></span>
+                  <button style="display: block;width: 10%;" matTooltip="Editar" mat-button color="primary"
+                    routerLink="/supplying/agreements/detail/{{agreement_id}}/fines/edit/{{element.id}}">
+                    <mat-icon [inline]="true">edit</mat-icon>
+                  </button>
+                  <button style="display: block;width: 10%;" matTooltip="Detalle" mat-button color="primary"
+                    routerLink="/supplying/agreements/detail/{{agreement_id}}/fines/detail/{{element.id}}">
+                    <mat-icon [inline]="true">info</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <h3 *ngIf="this.dataList?.length == 0">No hay datos que mostrar</h3>
+            <mat-paginator *ngIf="this.dataList?.length > 0" style="margin-bottom: 80px;" [length]="pageNumber"
+              [hidePageSize]="true" [pageSizeOptions]="[5]" (page)="pageEvent = loadPageData($event)"
+              showFirstLastButtons></mat-paginator>
+
+
+          </span>
+
+        </mat-tab>
+
+
+      </mat-tab-group>
+
+      <span>
+
+      </span>
+
+    </div>
+    <div *ngIf="dataLoaded == false" class="content">
+      <p>No se encontraron datos</p>
+    </div>
+
+
+
+    <div class="action">
+
+      <mat-divider></mat-divider>
+
+      <button *ngIf="fineCreatePrivilege" mat-button style="height: 30px;" color="accent" target="_blank"
+        routerLink="/supplying/agreements/detail/{{agreement_id}}/fines/create">
+        <mat-icon [inline]="true">gavel</mat-icon>Nueva multa
+      </button>
+
+      <button mat-button style="height: 30px;" color="accent" target="_blank"
+        routerLink="/supplying/agreements/detail/{{agreement_id}}">
+        <mat-icon [inline]="true">check</mat-icon>Ver detalle
+      </button>
+
+    </div>
+
+  </span>
+
+
+</ng-template>
+
+
+<seis-popover style="width: 100%;" matTooltip="Clìck para ver más detalles del convenio."
+  [popoverContent]="popoverContent" [xPosition]="'before'" [yPosition]="'above'" #popover="seisMatPopover">
+  <span class="seis-popover-link" style="width: 100%;">
+    <mat-chip-list style="width: 100%;">
+      <div class="md-chips">
+        <div class="md-chip">
+          <div [className]="typeClass">
+            <mat-icon [inline]="true">subject</mat-icon>
+          </div>
+          <p style="display:flow-root;">{{text}}</p>
+        </div>
+      </div>
+    </mat-chip-list>
+  </span>
+</seis-popover>

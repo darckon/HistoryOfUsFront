@@ -1,0 +1,113 @@
+<button *ngIf="createPrevilege" routerLink="/supplying/providers/create" mat-button color="primary"
+  style="float:right;">
+  <mat-icon>add</mat-icon>Crear proveedor
+</button>
+
+<form [formGroup]="filterGroup" fxLayoutAlign="start" fxLayoutGap="15px" style="width: 100%">
+
+  <mat-card style="flex-wrap:wrap;margin-bottom: 15px;width: 100%;">
+    <span style="flex-basis: 50%; flex-grow: 1;margin:5px; ">
+      <seis-provider-autocomplete formControlName="provider" formControlName='provInput'></seis-provider-autocomplete>
+    </span>
+    <button [disabled]="!filterGroup.valid" style="height: 40px; width: 100%; flex-basis: 10%; flex-grow: 1; "
+      mat-raised-button color="primary" (click)="sendForm()">
+      <mat-icon>search</mat-icon> Filtrar
+    </button>
+
+  </mat-card>
+
+
+</form>
+
+<div *ngIf="isLoadingData" style="min-height: 400px;">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoadingData" style="min-height: 400px;margin: 15px;margin-top: 30px;">
+  <mat-table *ngIf="providerList.length>0" [class.isMobile]="isMobile" [dataSource]="dataSource">
+
+    <ng-container cdkColumnDef="id">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>Id</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data" style="width: 90%;">
+          <span class="mobile-label blue">Id:</span>
+
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="name">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>Nombre</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data" style="width: 90%;">
+          <span class="mobile-label blue">Nombre:</span>
+          {{element.business_name}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="rut">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>Rut</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data" style="width: 90%;">
+          <span class="mobile-label blue">Rut:</span>
+          {{element.run}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+
+
+    <ng-container cdkColumnDef="address">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>dirección</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data" style="width: 90%;">
+          <span class="mobile-label blue">Dirección:</span>
+          {{element.address}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="commune">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>Comuna</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data" style="width: 90%;">
+          <span class="mobile-label blue">Comuna:</span>
+          {{element.commune}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+
+
+    <ng-container cdkColumnDef="contact_phone">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>Teléfono contacto</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data" style="width: 90%;">
+          <span class="mobile-label blue">Teléfono contacto:</span>
+          {{element.contact_phone}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="actions">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef> </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <span class="mobile-label blue"><b>Opciones:</b></span>
+        <button class="mat-button-action" mat-button color="primary" matTooltip="Detalle"
+          routerLink="/supplying/providers/detail/{{element.id}}">
+          <mat-icon>assignment</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <h3 *ngIf="this.providerList?.length == 0">No hay datos que mostrar</h3>
+
+</div>
+
+<mat-paginator style="margin-bottom: 80px;" [length]="pageNumber" [hidePageSize]="true" [pageSizeOptions]="[10]"
+  (page)="pageEvent = loadPageData($event)" showFirstLastButtons></mat-paginator>

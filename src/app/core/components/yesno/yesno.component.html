@@ -1,0 +1,20 @@
+<mat-chip-list style="width: 100%;">
+
+  <div class="md-chips">
+    <div class="md-chip" *ngIf="status==true">
+      <div class="md-chip-icon-yes">
+        <mat-icon [inline]="true">done</mat-icon>
+      </div>
+      <span *ngIf="showTest" style="width:100%;">Activo: Si</span>
+      <span *ngIf="!showTest" style="width:100%;">Si</span>
+    </div>
+    <div class="md-chip" *ngIf="!status">
+      <div class="md-chip-icon-no">
+        <mat-icon [inline]="true">clear</mat-icon>
+      </div>
+      <span *ngIf="showTest" style="width:100%;">Activo: No</span>
+      <span *ngIf="!showTest" style="width:100%;">NO</span>
+    </div>
+
+  </div>
+</mat-chip-list>

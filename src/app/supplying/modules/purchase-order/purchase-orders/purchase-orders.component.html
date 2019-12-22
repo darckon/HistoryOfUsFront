@@ -1,0 +1,273 @@
+
+    <button *ngIf="manualOcModule" routerLink="manual" mat-button color="primary" style="float:right;">
+      <mat-icon>add</mat-icon>Orden de compra manual
+    </button>
+    <form [formGroup]="filterGroup"  fxLayoutAlign="start" fxLayoutGap="15px" style="flex-wrap:wrap;margin-bottom: 15px;width: 100%;">
+    
+      
+      <mat-expansion-panel class="disable_ripple" style="flex-basis: 100%; flex-grow: 1;">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b>Filtros</b>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+      
+        <span style="flex-basis: 100%; flex-grow: 1;" >
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;" >
+
+              <!-- FECHA INICIO -->
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input" > 
+                <input matInput [matDatepicker]="picker" placeholder="Fecha de inicio" formControlName='initDateInput'>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+
+              <!-- FECHA FIN -->
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input" >
+                <input matInput [matDatepicker]="picker2" placeholder="Fecha de término" formControlName='endDateInput'>
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+              </mat-form-field>
+                
+          </span>
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;" >
+
+            <mat-autocomplete  #autoProv="matAutocomplete" [displayWith]="displayFn">
+              <ng-container>
+                <mat-option *ngFor="let prov of (filteredProviders | async)?.data.results" [value]="prov">
+                  <span>{{ prov.run }} - {{ prov.business_name }}</span>
+                </mat-option>
+              </ng-container>
+            </mat-autocomplete>
+  
+            <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+              <mat-label>{{ 'SUPPLYING.PURCHASE_ORDER._STATE_' | translate }}</mat-label>
+              <mat-select formControlName='statusInput'>
+      
+                <mat-option>
+                  Sin selección
+                </mat-option>
+      
+                <mat-optgroup label="Local">
+                  <mat-option *ngFor="let type of localMovementStates" [value]="type.id">
+                    {{type.name}}
+                  </mat-option>
+                </mat-optgroup>
+      
+                <mat-optgroup label="Mercado Público">
+                  <mat-option *ngFor="let type of PublicMarketStates" [value]="type.id">
+                    {{type.name}}
+                  </mat-option>
+                </mat-optgroup>
+      
+              </mat-select>
+            </mat-form-field>
+        
+            <!-- CODIGO DE OC -->
+            <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+              <input matInput placeholder="Código Orden de Compra" formControlName='codeInput'>
+            </mat-form-field>
+      
+            <!-- COMPRADOR -->
+            <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+              <mat-label>Comprador</mat-label>
+              <mat-select formControlName='buyerInput'>
+      
+                <mat-option>
+                  Sin selección
+                </mat-option>
+      
+                <mat-option *ngFor="let buyer of Buyers" [value]="buyer.id">
+                  {{buyer.name}}
+                </mat-option>
+      
+              </mat-select>
+            </mat-form-field>
+
+          </span>
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;" >
+          
+            <!-- CODE / NAME ARTICLE -->
+            <span style="flex-basis: 100%; flex-grow: 0.6;margin:5px; "   >
+              <seis-provider-autocomplete formControlName="provider" formControlName='provInput'></seis-provider-autocomplete>
+            </span>
+          </span>
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;" >
+            <span fxLayout="row" style="margin-top:15px;">
+              <mat-radio-group matInput formControlName="transferRadioButton" [(ngModel)]="option"
+                  aria-label="Seleccione una opcion" >
+                  <mat-radio-button value="ARTICLE">
+                      Artículo
+                  </mat-radio-button>
+                  <mat-radio-button style="margin-left:25px" value="SERVICE">
+                      Servicio
+                  </mat-radio-button>
+              </mat-radio-group>
+            </span>
+
+            <span style="flex-basis: 100%; flex-grow: 0.4;margin:5px; ">
+              <supplying-article-autocomplete 
+              [institution]="currentInstitution"
+              formControlName="codeArticleInput"
+              [service]="(option=='SERVICE')?true:false">>
+              </supplying-article-autocomplete>
+            </span>
+
+
+
+          </span>
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;" >
+            <button [disabled]="!filterGroup.valid" style="height: 40px; width: 100%; flex-basis: 10%; flex-grow: 1; "  mat-raised-button color="primary"
+            (click)="loadDataWithFilter()">
+            <mat-icon>search</mat-icon> Filtrar
+            </button>
+          </span>
+
+
+
+        </span>
+      
+      </mat-expansion-panel>
+
+
+
+    </form>
+  
+    <div *ngIf="isLoading">
+      <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+    </div>
+  
+    <div *ngIf="this.results.length < 1">
+      <h3 style="text-align: center;">
+        No hay resultados.
+      </h3>
+    </div>
+    
+    <mat-table *ngIf="!isLoading && this.results.length > 0" [class.isMobile]="isMobile" [dataSource]="dataSource">
+  
+      <!-- Position Column -->
+      <ng-container cdkColumnDef="code">
+        <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+          {{ 'SUPPLYING.PURCHASE_ORDER._CODE_' | translate }}</mat-header-cell>
+        <mat-cell *cdkCellDef="let element">
+          <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._CODE_' | translate }}:</span>
+          <seis-purchase-order-popup  [code]="element.code" ></seis-purchase-order-popup>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Position Column -->
+      <ng-container cdkColumnDef="status">
+        <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+          {{ 'SUPPLYING.PURCHASE_ORDER._STATE_' | translate }}</mat-header-cell>
+        <mat-cell *cdkCellDef="let element">
+          <p class="table-data">
+            <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._STATE_' | translate }}:</span>
+            <span *ngIf="element.movement_document[0]">
+              <span *ngIf="element.movement_document[0].movement_state">
+                {{element.movement_document[0].movement_state.name}}
+              </span>
+              <span *ngIf="!element.movement_document[0].movement_state">
+                -
+              </span>
+            </span>
+            <span *ngIf="!element.movement_document[0]">
+              -
+            </span>
+          </p>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Name Column -->
+      <ng-container cdkColumnDef="comment">
+        <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.PURCHASE_ORDER._COMMENT_' | translate }}
+        </mat-header-cell>
+        <mat-cell *cdkCellDef="let element">
+          <p class="table-data">
+            <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._COMMENT_' | translate }}:</span>
+            {{element.comment}}
+          </p>
+        </mat-cell>
+      </ng-container>
+  
+      <ng-container cdkColumnDef="provider">
+        <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.PURCHASE_ORDER._PROVIDER_' | translate }}
+        </mat-header-cell>
+        <mat-cell *cdkCellDef="let element">
+          <p class="table-data">
+            <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._PROVIDER_' | translate }}:</span>
+            <span *ngIf="element.movement_document[0]">
+  
+              <span *ngIf="element.movement_document[0].provider">
+                {{ element.movement_document[0].provider.business_name }}
+              </span>
+              <span *ngIf="!element.movement_document[0].movement_state">
+                -
+              </span>
+            </span>
+            <span *ngIf="!element.movement_document[0]">
+              -
+            </span>
+          </p>
+        </mat-cell>
+      </ng-container>
+  
+      <ng-container cdkColumnDef="purchase_amount">
+        <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.PURCHASE_ORDER._AMOUNT_' | translate }}
+        </mat-header-cell>
+        <mat-cell *cdkCellDef="let element">
+          <p class="table-data">
+            <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._AMOUNT_' | translate }}:</span>
+            {{(element.purchase_amount  - element.purchase_discount + element.purchase_charge  | taxV:element.tax.id ) | currency:'CLP'  }}
+          </p>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Weight Column -->
+      <ng-container cdkColumnDef="created_at">
+        <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.PURCHASE_ORDER._CREATED_' | translate }}
+        </mat-header-cell>
+        <mat-cell *cdkCellDef="let element">
+          <p class="table-data">
+            <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._CREATED_' | translate }}:</span>
+            {{element.created_at| date:'shortDate'}}
+          </p>
+        </mat-cell>
+      </ng-container>
+  
+      <ng-container cdkColumnDef="actions">
+        <mat-header-cell md-sort-header *cdkHeaderCellDef> </mat-header-cell>
+        <mat-cell *cdkCellDef="let element">
+          <span class="mobile-label blue"><b>Opciones:</b></span>
+
+          <mat-menu xPosition="before" #POMenu="matMenu">
+            <button *ngIf="can_viewDetail" style="display: block;width: 100%;text-align: left;" matTooltip="Detalle" mat-button color="primary" routerLink="detail/{{element.code}}">
+              <mat-icon>assignment</mat-icon> Detalle
+            </button>
+            <button *ngIf="providerReturnModule" style="display: block;width: 100%;text-align: left;"  matTooltip="Devolución a proveedor" mat-button color="primary" routerLink="return/{{element.code}}">
+              <mat-icon>compare_arrows</mat-icon> Devolución a proveedor
+            </button>
+          </mat-menu>
+          
+          <button *ngIf="can_viewDetail" mat-icon-button [matMenuTriggerFor]="POMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+
+
+        </mat-cell>
+      </ng-container>
+  
+      
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <mat-paginator [length]="pageNumber" [hidePageSize]="true" [pageSizeOptions]="[10]" (page)="loadPageData(page)"
+      showFirstLastButtons></mat-paginator>
+  
+ 

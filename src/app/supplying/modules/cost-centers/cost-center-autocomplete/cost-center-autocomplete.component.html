@@ -1,0 +1,62 @@
+<form style="width: 100%;" [formGroup]="formGroup">
+    
+  <mat-form-field appearance="outline" style="width: 100%;" *ngIf="!_target">
+      <mat-label>{{fieldname}} </mat-label>
+    <input formControlName="cost_center_text" style="width: 100%;" matInput
+      placeholder="{{placeholder}}" [matAutocomplete]="auto">
+  </mat-form-field>
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" style="min-width: 600px;">
+    <ng-container>
+
+      <ng-container *ngIf="(ccList$ | async)?.data as list">
+        <ng-container *ngIf="!autocompleteLoading">
+          <mat-option *ngFor="let target of list" (onSelectionChange)="onSelectedTransferOption(target);"
+            [value]="target">
+
+            <p>
+              <span><b>{{target.name}}</b></span>
+            </p>
+            <p>
+              <span *ngIf="target.perc_name">
+                Código perc: <span class="blue">{{target.perc_name}}</span>
+              </span>
+              <span style="margin-left:5px;">
+                Puede pedir:<span class="blue">{{target.can_request?"si":"no"}}</span>
+              </span>
+            </p>
+
+          </mat-option>
+        </ng-container>
+      </ng-container>
+
+      <mat-option *ngIf="autocompleteLoading && formGroup.get('cost_center_text')?.value?.length > 2">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </mat-option>
+      <mat-option
+        *ngIf="!autocompleteLoading && formGroup.get('cost_center_text')?.value?.length > 3 && (ccList$ | async)?.data?.length == 0"
+        style="width: 100%;" disabled>
+        <span style="font-size: 12px;width: 100%;display: flex;align-content:space-around;">
+          <p >No se encontraron centros de costo.</p>
+        </span>
+      </mat-option>
+      <mat-option *ngIf="!autocompleteLoading && formGroup.get('cost_center_text')?.value?.length < 3"
+        style="width: 100%;" disabled>
+        <span>
+          <p style="color:gray">Ingrese 4 o más carácteres para buscar.</p>
+        </span>
+      </mat-option>
+
+    </ng-container>
+  </mat-autocomplete>
+
+  <mat-chip-list *ngIf="_target" style="width: 100% !important;height: fit-content !important;">
+    
+      <mat-chip style="width: 100% !important;height: fit-content !important;" selected class="mat-chip-list-stacked" (removed)="removeTarget(); propagateChange();">
+        <span class="info-title" style="margin-left: 15px; color: white;"><b> Centro de costo:</b> {{_target.name}} </span>
+        <mat-icon *ngIf="enabled" matChipRemove>cancel</mat-icon>
+      </mat-chip>
+
+  </mat-chip-list>
+
+
+</form>

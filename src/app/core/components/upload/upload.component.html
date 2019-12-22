@@ -1,0 +1,18 @@
+<div style="width: 100%">
+  <input type="file" #file style="display: none" (change)="onFilesAdded()" multiple />
+
+  <button mat-stroked-button color="primary" type="button" style="width: 100%;" class="add-files-btn"
+    (click)="addFiles()" style="width: 100%;" matTooltip="Máximo 3mb">
+    <mat-icon>cloud_upload</mat-icon> Subir documento (Opcional)
+  </button>
+
+  <mat-chip-list *ngIf="currentFiles.length>0" style="width: 100%; margin-top:30px;">
+    <br>
+    <mat-chip *ngFor="let file of currentFiles;  let i = index" selected color="primary" style="width: 100%;">
+      {{file.name}}
+      <mat-icon matChipRemove (click)="removeFile(i)">cancel</mat-icon>
+      <br>
+    </mat-chip>
+  </mat-chip-list>
+
+</div>

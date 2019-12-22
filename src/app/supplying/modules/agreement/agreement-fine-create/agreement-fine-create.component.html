@@ -1,0 +1,214 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading && dataLoaded">
+
+  <span style="display: flex; flex-wrap: wrap;" style="width: 100%;">
+    <mat-card class="description-card-container">
+      <h3 style="width: 100%;"><b style="color: white !important;">
+        {{agreementData.name  | uppercase }} - {{agreementData.bidding.code}}</b></h3>
+      <h2 style="width: 100%;"><b>Proveedor:</b> <span
+          style="color:white;">{{agreementData.detail[0]?.provider?.business_name }}
+          {{agreementData.detail[0]?.provider?.run}}</span></h2>
+    </mat-card>
+  </span>
+
+  <form [formGroup]="formGroup">
+
+    <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+      <mat-card class="inner-card">
+        <mat-card-header>
+          <mat-card-title>
+            Multa
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content style="padding:15px;">
+          <div class="order-container">
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-form-field appearance="outline" style="flex-grow: 1;margin:5px;">
+                <mat-label>Descripción </mat-label>
+                <textarea style="width: 100%;" appearance="outline" formControlName="description" matInput
+                  placeholder="Descripción" value=""></textarea>
+              </mat-form-field>
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                <mat-label>Concepto(*) </mat-label>
+                <mat-select formControlName="status">
+
+                  <mat-option>
+                    Sin selección
+                  </mat-option>
+
+                  <mat-option selected="0" *ngFor="let status of statusTypes" [value]="status">
+                    {{status.name}}
+                  </mat-option>
+
+
+                </mat-select>
+                <mat-error *ngIf="formGroup.controls['status']?.hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+
+              </mat-form-field>
+
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                <mat-label>Estaod(*) </mat-label>
+                <mat-select formControlName="concept">
+
+                  <mat-option>
+                    Sin selección
+                  </mat-option>
+
+                  <mat-option selected="0" *ngFor="let com of compliances" [value]="com">
+                    {{com.name}}
+                  </mat-option>
+
+
+                </mat-select>
+                <mat-error *ngIf="formGroup.controls['concept']?.hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+
+              </mat-form-field>
+
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;">
+                <mat-label>Fecha notificación(*) </mat-label>
+                <input matInput [matDatepicker]="picker1" placeholder="Fecha de notificación"
+                  formControlName='notification_date'>
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+                <mat-error *ngIf="formGroup.controls['notification_date'].hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+              </mat-form-field>
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;">
+                <mat-label>Fecha descargo(*) </mat-label>
+                <input matInput [matDatepicker]="picker2" placeholder="Fecha de descargo"
+                  formControlName='discharge_date'>
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+                <mat-error *ngIf="formGroup.controls['discharge_date'].hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+              </mat-form-field>
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;">
+                <mat-label>Fecha resolución(*) </mat-label>
+                <input matInput [matDatepicker]="picker3" placeholder="Fecha de resolución"
+                  formControlName='resolution_date'>
+                <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                <mat-datepicker #picker3></mat-datepicker>
+                <mat-error *ngIf="formGroup.controls['resolution_date'].hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+              </mat-form-field>
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                <mat-label>Número Res(*) </mat-label>
+                <input appearance="outline" class="mobile-form-input" formControlName="res_number" matInput
+                  placeholder="Número res">
+                <mat-error *ngIf="formGroup.controls['res_number'].hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+                <mat-error *ngIf="formGroup.controls['res_number'].hasError('pattern')">
+                  Este campo debe ser un número
+                </mat-error>
+              </mat-form-field>
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                <mat-label>Número exp </mat-label>
+                <input appearance="outline" class="mobile-form-input" formControlName="exp_number" matInput
+                  placeholder="Número Exp">
+                <mat-error *ngIf="formGroup.controls['exp_number'].hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+                <mat-error *ngIf="formGroup.controls['exp_number'].hasError('pattern')">
+                  Este campo debe ser un número
+                </mat-error>
+
+              </mat-form-field>
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                <mat-label>Monto(*) </mat-label>
+                <input appearance="outline" class="mobile-form-input" formControlName="amount" matInput
+                  placeholder="Monto">
+                <mat-error *ngIf="formGroup.controls['amount'].hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+                <mat-error *ngIf="formGroup.controls['amount'].hasError('pattern')">
+                  Este campo debe ser un número
+                </mat-error>
+
+              </mat-form-field>
+            </span>
+            <mat-checkbox class="margin" value="false" formControlName="is_utm">
+              Es UTM?
+            </mat-checkbox>
+            <mat-checkbox class="margin" value="false" formControlName="cancelled">
+              Cancelado
+            </mat-checkbox>
+
+          </div>
+        </mat-card-content>
+
+
+
+      </mat-card>
+    </span>
+
+    <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+      <mat-card class="inner-card">
+        <mat-card-content style="padding:15px;">
+          <span fxLayout="row" style="display: flex; flex-direction: row;">
+
+            <button style="margin:15px;" (click)="send()" style="flex-grow: 1;" mat-raised-button color="accent">
+              <mat-icon>border_color</mat-icon> Crear multa
+            </button>
+
+          </span>
+        </mat-card-content>
+      </mat-card>
+
+    </span>
+
+
+
+  </form>
+</div>
+
+
+<div *ngIf="!isLoading && !dataLoaded">
+
+  <h1 style="text-align: center;">
+    <mat-icon [inline]="true">warning</mat-icon>
+  </h1>
+  <h4 style="text-align: center;">
+    Error al acceder la pagina solicitada.
+  </h4>
+
+</div>

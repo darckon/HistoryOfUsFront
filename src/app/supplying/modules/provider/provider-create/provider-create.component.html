@@ -1,0 +1,162 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+  <form [formGroup]="providerFormgroup">
+
+    <mat-card class="inner-card">
+      <mat-card-content class="mat-header-row">
+        <button (click)="clearForm()" mat-raised-button>
+          <mat-icon>replay</mat-icon> Limpiar formulario
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="inner-card">
+      <mat-card-header>
+        <mat-card-title>
+          Datos proveedor
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="padding:15px;">
+        <div class="order-container" *ngIf="communes">
+
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+            <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+              <mat-label>Comuna(*) </mat-label>
+              <mat-select formControlName="commune">
+
+                <mat-option>
+                  Sin selección
+                </mat-option>
+
+
+                <mat-option selected="0" *ngFor="let com of communes" [value]="com.id">
+                  {{com.name}}
+                </mat-option>
+
+
+              </mat-select>
+              <mat-error *ngIf="providerFormgroup.controls['commune']?.hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+
+            </mat-form-field>
+          </span>
+
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="run" matInput placeholder="Run">
+              <mat-error *ngIf="providerFormgroup.controls['run'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field style="margin:5px;flex-grow: 1;">
+              <input appearance="outline" class="mobile-form-input" formControlName="business_name" matInput
+                placeholder="Nombre">
+              <mat-error *ngIf="providerFormgroup.controls['business_name'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+          </span>
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="branch_office_code" matInput placeholder="Código sucursal">
+              <mat-error *ngIf="providerFormgroup.controls['branch_office_code'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="code" matInput placeholder="Código">
+              <mat-error *ngIf="providerFormgroup.controls['code'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+          </span>
+
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="address" matInput placeholder="Dirección">
+              <mat-error *ngIf="providerFormgroup.controls['address'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="phone" matInput placeholder="Teléfono">
+              <mat-error *ngIf="providerFormgroup.controls['phone'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+          </span>
+
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="contact_name" matInput placeholder="Nombre de contacto">
+              <mat-error *ngIf="providerFormgroup.controls['contact_name'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="contact_phone" matInput placeholder="Teléfono de contacto">
+              <mat-error *ngIf="providerFormgroup.controls['contact_phone'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <!-- contact_email | work_position_contact -->
+
+          </span>
+
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="contact_email" matInput placeholder="Correo contacto">
+              <mat-error *ngIf="providerFormgroup.controls['contact_email'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field style="margin:5px;flex-grow: 1;" class="mobile-form-input">
+              <input appearance="outline" formControlName="work_position_contact" matInput
+                placeholder="Posición/rol del contacto">
+              <mat-error *ngIf="providerFormgroup.controls['work_position_contact'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+          </span>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+
+
+    <mat-card class="inner-card">
+      <mat-card-content style="padding:15px;">
+        <span fxLayout="row">
+          <button [disabled]="providerFormgroup.invalid" (click)="send()" style="width: 100%;" mat-raised-button
+            color="accent">
+            <mat-icon>border_color</mat-icon> Crear proveedor
+          </button>
+        </span>
+      </mat-card-content>
+    </mat-card>
+
+  </form>
+</div>

@@ -1,0 +1,93 @@
+<mat-card class="dashboard-card">
+  <mat-card-header class="mat-card-blue-header">
+    <mat-card-title aria-label>
+      <h2 class="blue" style="display: inline;"> {{ '_CORE_' | translate | uppercase }} | </h2>
+      <p class="light-green" style="display: inline;">
+        <mat-icon [inline]="true">user</mat-icon>{{'_EDIT_USER_' | translate | uppercase  }}
+      </p>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="dashboard-card-content">
+
+    <form [formGroup]="formGroup">
+      <mat-drawer-container class="example-container">
+        <mat-drawer mode="side" opened style="padding:10px">
+          <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+            <mat-label>Tipo Notificación(*) </mat-label>
+            <mat-select (selectionChange)="changeType($event)" formControlName="type">
+              <mat-option>
+                Sin selección
+              </mat-option>
+              <mat-option selected="0" *ngFor="let type of types" [value]="type.id">
+                {{type.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="formGroup.controls['type']?.hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>
+          </mat-form-field>
+          <br>
+          <mat-form-field appearance="outline" *ngIf="enable_groups" appearance="outline"
+            style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+            <mat-label>Grupos(*) </mat-label>
+            <mat-select formControlName="group">
+              <mat-option>
+                Sin selección
+              </mat-option>
+              <mat-option selected="0" *ngFor="let group of groups" [value]="group.id">
+                {{group.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="formGroup.controls['group']?.hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="enable_users" appearance="outline"
+            style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+            <mat-label>Usuarios(*) </mat-label>
+            <mat-select formControlName="user">
+              <mat-option>
+                Sin selección
+              </mat-option>
+              <mat-option selected="0" *ngFor="let user of users" [value]="user.id">
+                {{user.username}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="formGroup.controls['user']?.hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>
+          </mat-form-field>
+          <br>
+          <mat-checkbox value="false" formControlName="by_system">
+            Sistema
+          </mat-checkbox>
+          <br>
+          <mat-checkbox value="false" formControlName="by_email">
+            E-mail
+          </mat-checkbox>
+          <br>
+          <mat-checkbox value="false" formControlName="by_push">
+            Push
+          </mat-checkbox>
+
+        </mat-drawer>
+        <mat-drawer-content style="padding:10px">
+          <br>
+
+          <mat-form-field appearance="outline" class="example-full-width">
+            <mat-label>Mensaje</mat-label>
+            <textarea matInput placeholder="Escribe aquí" formControlName="text"></textarea>
+          </mat-form-field>
+          <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+            <button (click)="send()" style="width: 100%;" mat-raised-button color="accent">
+              <mat-icon>send</mat-icon> Enviar
+            </button>
+
+          </span>
+        </mat-drawer-content>
+
+      </mat-drawer-container>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+
+  core_angular_app:
+    container_name: core_angular_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/src/app
+    entrypoint: ["sh", "-c", "sleep infinity"]
+
+  nginx:
+    image: nginx:1.14
+    container_name: nginx_app
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d
+      - ./dist/:/usr/share/nginx/html  # <-- production code
+    depends_on:
+      - core_angular_app
+    networks:  # <-- here
+      default:
+        ipv4_address: 172.18.0.20
+
+networks:  # <-- and here
+   default:
+     external:
+       name: seisnet

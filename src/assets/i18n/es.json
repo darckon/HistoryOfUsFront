@@ -1,0 +1,117 @@
+{
+    "_CELLAR_": "Bodega",
+    "_ARTICLE_": "Artículo",
+    "_SUPPLYING_": "Abastecimiento",
+    "_SERVICE_": "Servicio",
+    "_PURCHASE_ORDER_": "Orden de compra",
+    "_BACK_": "Regresar",
+    "_ORDERS_": "Pedidos",
+    "_MANUAL_PURCHASE_ORDER_": "Orden de compra manual",
+    "NAVBAR":{
+        "_HOME_": "Inicio",
+        "_CLOSE_SESSION_": "Cerrar sesión",
+        "_CHANGE_PROFILE_": "Cambiar perfil",
+        "_CELLAR_": "Bodegas",
+        "_ARTICLE_": "Artículos",
+        "_PURCHASE_ORDER_": "Ordenes de compra",
+        "_PURCHASE_ORDER_DETAIL_": "Detalle orden de compra",
+        "_LIST_PURCHASE_ORDERS_": "Listado de ordenes de compra",
+        "_CELLAR_ADJUSTMENT_": "Ajuste de bodega",
+        "_MOVEMENT_TRANSFER_REQUESTS_": "Movimientos",
+        "_LIST_ARTICLE_": "Listado de artículos",
+        "_BINCARD_": "Bincard",
+        "_ORDERS_": "Pedidos",
+        "_PROCESS_MASSIVE_CODIFICATION_": "Codificatión Masiva",
+        "_MASSIVE_CODDING_DATA_": "Codificación Masiva",
+        "_ADMINISTRATION_": "Administración",
+        "_LIST_PROVIDER_": "Proveedores",
+        "_LIST_COST_CENTERS": "Centros de costo",
+        "_LIST_LOCATION_": "Ubicaciones",
+        "_LIST_USERS_": "Usuarios",
+        "_LIST_PROVIDERS_": "Proveedores",
+        "_LIST_PROFILES_": "Perfiles de usuario",
+        "_DETAIL_INSTITUTION_": "Institución",
+        "_LIST_AGREEMENT_": "Convenios",
+        "_LIST_COST_CENTERS_": "Centros de costo",
+        "_LIST_LOCATIONS_": "Ubicaciones",
+        "_LIST_SERVICE_": "Servicios",
+        "_STOCK_ADJUST_": "Ajuste de stock"
+
+    },
+    "HOME":{
+        "_DASHBOARD_": "Panel informativo"
+    },
+    "CORE":{
+        "USERS":{
+            "TABLE_USERS":{
+                "_PROFILES_": "Perfil",
+                "_LOCATIONS_": "Ubicaciones"
+            }
+        }
+    },
+    "SUPPLYING":{
+        "PURCHASE_ORDER":{
+            "_CELLAR_": "Bodega",
+            "_PURCHASE_ORDERS_": "Ordenes de compra",
+            "_PURCHASE_ORDER_DETAIL_": "Detalle orden de compra",
+            "_CODE_": "Código",
+            "_STATE_": "Estado",
+            "_COMMENT_": "Comentario",
+            "_PROVIDER_": "Proveedor",
+            "_AMOUNT_": "Monto de compra",
+            "_CREATED_": "Creado",
+            "_ENCODE_": "Codificar",
+            "_ENCODE_EARRINGS_": "Pendientes de codificar",
+            "_RECEIVE_PURCHASE_ORDER_": "Recepcionar orden de compra",
+            "_RECORD_": "Historial",
+            "_ASSIGN_TO": "Asignar a",
+            "_TRANSFER_REQUESTS_": "Movimientos",
+            "_INTERMEDITATOR_": "Intermediación"
+        },
+        "ARTICLE":{
+            "_ARTICLE_": "Articulo",
+            "_BINCARD_": "Bincard",
+            "_CELLAR_": "Bodega",
+            "_ENTRY_STOCK_": "Stock entrada",
+            "_EXIT_STOCK_": "Stock salida",
+            "_MOVEMENT_DATE_": "Fecha movimiento",
+            "_MOVEMENT_TYPE_": "Tipo de movimiento",
+            "_EXPIRE_DATE_": "Fecha vencimiento",
+            "_STOCK_": "Stock actual",
+            "_NEW_STOCK_": "Nuevo stock",
+            "_ORIGIN_": "Origen",
+            "_DESTINATION_": "Destino",
+            "_N_ORDER_": "N° de pedido",
+            "_BATCH_": "Lote",
+            "_N_SERIE_": "Serie"
+        },
+        "ORDER": {
+            "_REQUESTED_": "SOLICITADO",
+            "_TRANSIT_": "EN TRANSITO",
+            "_FINISHED_": "FINALIZADO",
+            "_ARTICLE_CODE_": "Código",
+            "_ARTICLE_NAME_": "Nombre",
+            "_QUANTITY_": "Cantidad",
+            "_ACTIONS_" : "Acciones",
+            "_DEBT_" : "Pendientes",
+            "_REAL_STOCK_" : "Stock real",
+            "_SENDED_" : "Enviados",
+            "_DATE_" : "Fecha",
+            "_DISPATCH_" : "Despacho",
+            "_STATUS_": "Estado",
+            "_STOCK_": "Stock",
+            "_SN_": "N° serie",
+            "_EXPIRATION_DATE_": "Fecha vencimiento",
+            "_RETURN_QUANTITY_": "Cantidad a devolver",
+            "_SUBTOTAL_": "subtotal",
+            "_UNIT_VALUE_": "Valor unitario",
+            "_BATCH_": "Lote",
+            "_N_SERIE_": "Nª Serie",
+            "_QUANTITY_LEFT_": "Disponibles a devolver",
+            "_DESTINATION_NAME_": "Destino",
+            "_PENDING_QUANTITY_": "Cantidad pendientes",
+            "_ORDER_" : "Pedido",
+            "_UNIT_VALUE_TAX_": "Impuesto"
+        }
+    }
+}

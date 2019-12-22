@@ -1,0 +1,57 @@
+<h1 mat-dialog-title style="text-align: center"> Factor de empaque</h1>
+
+<div style="width: 100%;" mat-dialog-content style="display: flex; flex-wrap: wrap; Justify-content: space-around;">
+
+    <form style="width: 100%;" [formGroup]="detailTransferFormGroup">
+
+        <span fxLayout="row">
+            <p>
+                <span class="target_comment">Actualmente la cantidad solicitada es {{selectedTransfer.requested}}.</span>
+                <span fxLayout="row"></span>
+                <span class="target_comment">Indique la nueva cantidad a despachar, y deje un comentario.</span>
+            </p>
+        </span>
+
+        <span fxLayout="row"></span>
+
+        <span fxLayout="row" style="margin-top:15px;">
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                    <mat-label>Cantidad(*) </mat-label>
+                    <input appearance="outline" class="mobile-form-input" formControlName="new_quantity" matInput
+                    placeholder="Cantidad">
+                    <mat-error *ngIf="detailTransferFormGroup.controls['new_quantity'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+                </mat-form-field>
+    
+            </span>
+        </span>
+
+        <span fxLayout="row" style="margin-top:15px;">
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                    <mat-label>Comentario(*) </mat-label>
+                    <textarea appearance="outline" class="mobile-form-input" formControlName="new_comment" matInput
+                    placeholder="Comentario"></textarea>
+                    <mat-error *ngIf="detailTransferFormGroup.controls['new_comment'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+                </mat-form-field>
+    
+            </span>
+        </span>
+    </form>
+
+</div>
+<div mat-dialog-actions>
+
+    <button type="button"
+        [disabled]="!detailTransferFormGroup.valid" mat-raised-button
+        color="primary" (click)="editTransfer()">
+        <mat-icon inline>check</mat-icon> Editar
+    </button>
+    <button type="button" mat-raised-button color="warn" (click)="onNoClick()">
+        Cancelar</button>
+
+</div>

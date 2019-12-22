@@ -1,0 +1,15 @@
+<div *ngIf="_progress==0 || _extra==0">
+    <progress-bar [progress]="_progress" [color]="'#039be5'">
+    </progress-bar>
+</div>
+
+<div style="display: flex;flex-wrap:nowrap " *ngIf="_progress && _extra>0">
+    <span style="flex-basis: 90%;flex-grow: 1;">
+        <progress-bar [progress]="_progress" [color]="'#039be5'">
+        </progress-bar>
+    </span>
+    <span style="flex-basis: 10%;padding:15px;">
+        <span class="blue"> + <b>{{_extra}}</b> % </span>
+    </span>
+
+</div>

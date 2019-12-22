@@ -1,0 +1,208 @@
+<ng-template #popoverContent style="width: 600px;">
+  <div class="title" *ngIf="!isLoading">
+    <h2 class="blue">Orden de compra: <span class="blue"># {{code}}</span> </h2>
+    <h3 class="red" *ngIf="transferElementCount>0">Con artículos sin codificar ({{transferElementCount}}).</h3>
+  </div>
+
+  <span *ngIf="isLoading">
+    <div class="content">
+      <mat-label style="text-align: center; ">
+        <p style="color:#689FD1">
+          <mat-spinner style="margin:0 auto;" [diameter]="30"></mat-spinner>
+        </p>
+      </mat-label>
+    </div>
+  </span>
+  <span *ngIf="!isLoading">
+    <div *ngIf="dataLoaded == true" class="content">
+      <span>
+
+        <mat-tab-group>
+          <mat-tab style="padding:5px;">
+            <ng-template mat-tab-label>
+              <mat-icon>bar_chart</mat-icon> Detalle
+            </ng-template>
+
+            <span fxLayout style="margin:15px; margin-top:10px;font-size: 12px;" class="info-line-container">
+
+              <div class="info-line">
+                <div class="title blue">Código OC</div>
+                <div class="info">{{document.code}}</div>
+              </div>
+              <div class="info-line">
+                <div class="title blue">Código Licitación</div>
+                <div class="info">{{document.bidding_code}}</div>
+              </div>
+              <div class="info-line">
+                <div class="title blue">Estado</div>
+                <div class="info">{{ocData.movement_state.name | uppercase}}</div>
+              </div>
+              <div class="info-line">
+                <div class="title blue">Tipo</div>
+                <div class="info">{{ocData.movement_type.name | uppercase}}</div>
+              </div>
+            </span>
+
+          </mat-tab>
+          <mat-tab style="padding:5px;">
+            <ng-template mat-tab-label>
+              <mat-icon>info</mat-icon> Comentario {{is_service}}
+            </ng-template>
+
+            <span fxLayout style="margin:15px; margin-top:10px;font-size: 12px;" class="info-line-container">
+              {{document.comment}}
+            </span>
+
+          </mat-tab>
+
+          <mat-tab *ngIf="transferElementCount == 0 " style="padding:5px;">
+            <ng-template mat-tab-label>
+              <span *ngIf="is_service">  <mat-icon>reorder</mat-icon> Servicios</span>
+              <span *ngIf="!is_service"> <mat-icon >reorder</mat-icon> Artículos</span>
+            </ng-template>
+
+            <span style="margin-top:10px;">
+
+
+              <mat-table [class.isMobile]="isMobile" [dataSource]="detailArticleDataSource">
+
+
+                <ng-container cdkColumnDef="fine_state">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>ID</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">ID:</span>
+                      <b>{{element.ID }}</b>
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="charge">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>Cargo</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">Cargo:</span>
+                      {{element.charge | iva:withIva | currency:'CLP' }}
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="discount">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>Descuento</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">Cargo:</span>
+                      {{element.discount | iva:withIva | currency:'CLP' }}
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="provider_product_code">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>Código artículo </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">Código artículo :</span>
+                      <app-article-info [id]="element.article_id" [code]="element.article_code"></app-article-info>
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="quantity">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>Cantidad </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">Cantidad:</span>
+                      {{element.quantity}}
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                   <ng-container cdkColumnDef="unit_value">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>Valor unitario </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">Valor unitario:</span>
+                      {{element.unit_value| iva:withIva |currency:'CLP' }}
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="subtotal">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>Subtotal </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">subtotal:</span>
+                      {{element.subtotal| iva:withIva | currency:'CLP' }}
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="tax_amount">
+                  <mat-header-cell md-sort-header *cdkHeaderCellDef>Impuesto </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element">
+                    <p class="table-data" style="width: 90%;">
+                      <span class="mobile-label blue">Impuesto:</span>
+                      {{element.tax_amount| iva:withIva | currency:'CLP' }}
+                    </p>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *cdkHeaderRowDef="detailArticleDisplayedColumns"></mat-header-row>
+                <mat-row *cdkRowDef="let row; columns: detailArticleDisplayedColumns;"></mat-row>
+              </mat-table>
+              <mat-paginator [pageSizeOptions]="[5]" showFirstLastButtons></mat-paginator>
+
+            </span>
+
+          </mat-tab>
+
+        </mat-tab-group>
+
+      </span>
+    </div>
+    <div *ngIf="dataLoaded == false" class="content">
+      <p>No se encontraron datos</p>
+    </div>
+
+
+
+    <div class="action">
+
+      <mat-divider></mat-divider>
+
+
+      <button *ngIf="providerReturnModule" mat-button style="height: 30px;" color="accent" target="_blank"
+        routerLink="/supplying/purchase-orders/return/{{code}}">
+        <mat-icon  [inline]="true">compare_arrows</mat-icon>Devolución a proveedor
+      </button>
+      <button *ngIf="currentModule" mat-button style="height: 30px;" color="accent" target="_blank"
+        routerLink="/supplying/purchase-orders/detail/{{code}}/">
+        <mat-icon [inline]="true">check</mat-icon>Ver detalle
+      </button>
+
+    </div>
+
+  </span>
+
+</ng-template>
+
+
+<seis-popover style="width: 100%;" [popoverContent]="popoverContent" [xPosition]="'before'" [yPosition]="'above'"
+  #popover="seisMatPopover">
+
+  <span class="seis-popover-link" style="width: 100%;">
+    <mat-chip-list style="width: 100%;">
+      <div class="md-chips">
+        <div class="md-chip">
+          <div class="md-chip-icon">
+            <mat-icon [inline]="true">subject</mat-icon>
+          </div>
+          <p style="display:flow-root;">
+            <app-purchase-order-info [code]="code"></app-purchase-order-info>
+          </p>
+        </div>
+      </div>
+    </mat-chip-list>
+  </span>
+
+</seis-popover>

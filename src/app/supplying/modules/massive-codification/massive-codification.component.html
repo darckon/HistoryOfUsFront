@@ -1,0 +1,119 @@
+<mat-tab-group [animationDuration]="0" [(selectedIndex)]="currentOption"
+  (selectedTabChange)="selectedTabChange($event)">
+  <mat-tab *ngIf="massiveCodificationModule">
+    <ng-template mat-tab-label>
+      <mat-icon>av_timer</mat-icon>Artículos pendientes de codificación
+    </ng-template>
+  </mat-tab>
+  <mat-tab style="margin:15px;" *ngIf="massiveRecodificationModule || massiveRevertModule">
+    <ng-template mat-tab-label>
+      <mat-icon>healing</mat-icon>Artículos con codificación asignada
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
+
+<div *ngIf="isLoading" style="min-height: 400px;">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading" style="min-height: 400px;margin: 15px;margin-top: 30px;">
+
+  <div *ngIf="noData == true">
+    <h3>No hay datos que mostrar</h3>
+  </div>
+  <div *ngIf="noData == false">
+
+    <div style="display: flex; flex-wrap: wrap; Justify-content: space-around; height: 100%;">
+      <span style="flex-basis: 100%;flex-grow: 1;">
+        <mat-table [class.isMobile]="isMobile" [dataSource]="detailTransferDataSource">
+
+          <ng-container cdkColumnDef="comment">
+            <mat-header-cell md-sort-header *cdkHeaderCellDef>Glosa</mat-header-cell>
+            <mat-cell *cdkCellDef="let element">
+              <p class="table-data" [class.delete-label]="element._editInfo?.set_for_revert==true"
+                *ngIf="!element._name">
+                <span class="mobile-label blue">Glosa:</span>
+                <span>
+                  {{element.comment}}
+                  <div *ngIf="element.item_type">
+                    <div *ngIf="element.item_type==1">(Artículo)</div>
+                    <div *ngIf="element.item_type==0">(Servicio)</div>
+                  </div>
+                </span>
+              </p>
+              <p class="table-data" [class.delete-label-text]="element._editInfo?.set_for_revert==true"
+                *ngIf="element._name">
+                <span class="mobile-label blue">Glosa:</span>
+                {{element._name}}
+              </p>
+
+            </mat-cell>
+          </ng-container>
+
+          <ng-container cdkColumnDef="item_name">
+            <mat-header-cell md-sort-header *cdkHeaderCellDef>Codificado a</mat-header-cell>
+            <mat-cell *cdkCellDef="let element">
+              <p class="table-data" [class.delete-label]="element._editInfo?.set_for_revert==true"
+                *ngIf="element.item_name">
+                <span class="mobile-label blue">Codificado a:</span>
+                <span>
+                  {{element.item_name}}
+                </span>
+              </p>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container cdkColumnDef="n_concurrence">
+            <mat-header-cell md-sort-header *cdkHeaderCellDef>N° concurrencias</mat-header-cell>
+            <mat-cell *cdkCellDef="let element">
+              <p class="table-data" [class.delete-label]="element._editInfo?.set_for_revert==true">
+                <span class="mobile-label blue">N° concurrencias:</span>
+                {{element.total}}
+              </p>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container cdkColumnDef="action">
+            <mat-header-cell md-sort-header *cdkHeaderCellDef></mat-header-cell>
+            <mat-cell *cdkCellDef="let element">
+              <button mat-button color="primary" style="width: 100%;"
+                (click)="selectTransferForEdition(element);">Modificar</button>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container cdkColumnDef="status">
+            <mat-header-cell md-sort-header *cdkHeaderCellDef></mat-header-cell>
+            <mat-cell *cdkCellDef="let element">
+              <span *ngIf="element._editInfo?.edited">
+                <mat-icon [class.delete-label]="element._editInfo?.set_for_revert==true"
+                  matTooltip="Este articulo tiene una nueva codificación asignada."
+                  *ngIf="element._editInfo?.set_for_revert==false">check_circle</mat-icon>
+                <mat-icon [class.delete-label-text]="element._editInfo?.set_for_revert==true"
+                  matTooltip="Este articulo quedará sin codificación asignada."
+                  *ngIf="element._editInfo?.set_for_revert==true">highlight_off</mat-icon>
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *cdkHeaderRowDef="detailTransferDisplayedColumns"></mat-header-row>
+          <mat-row *cdkRowDef="let row; columns: detailTransferDisplayedColumns;"></mat-row>
+        </mat-table>
+
+      </span>
+
+      <span style="flex-basis: 100%;flex-grow: 1;margin:15px;">
+        <button [disabled]="editedTransfersCount<1" mat-stroked-button color="primary" (click)="saveAllTransfers()">
+          Confirmar cambios
+          <span *ngIf="editedTransfersCount>0">
+            ({{editedTransfersCount}})
+          </span>
+        </button>
+        <button style="margin-left: 15px;" *ngIf="false" (click)="clearForm()" mat-stroked-button color="primary">
+          Limpiar formulario
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+<mat-paginator [length]="pageNumber" [hidePageSize]="true" [pageSizeOptions]="[10]"
+  (page)="pageEvent = loadPageData($event)" showFirstLastButtons></mat-paginator>

@@ -1,0 +1,209 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+
+  <span *ngIf="currentModule"> 
+      <form [formGroup]="orderFormGroup">
+
+
+          <mat-card class="inner-card">
+            <mat-card-content class="mat-header-row" >
+              <button (click)="clearForm()" mat-raised-button><mat-icon >replay</mat-icon> Limpiar formulario</button>
+            </mat-card-content>
+          </mat-card>
+      
+          <mat-card class="inner-card">
+            <mat-card-header>
+              <mat-card-title>
+                Datos orden
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content style="padding:15px;">
+              <div class="order-container">
+      
+                <span [hidden]="movementDefaultInfoSet==true" style="display: flex; flex-wrap: wrap;">
+      
+                  <mat-form-field style="flex-grow: 1;margin:5px;">
+                    <mat-label>Origen</mat-label>
+                    <mat-select formControlName="origin">
+      
+                      <mat-option>
+                        Sin selección
+                      </mat-option>
+      
+                      <mat-optgroup label="Bodegas">
+                        <mat-option selected="0" *ngFor="let loc of locations" [value]="loc">
+                          {{loc.name}}
+                        </mat-option>
+                      </mat-optgroup>
+      
+                      <mat-optgroup label="Centros de costo">
+                        <mat-option selected="0" *ngFor="let loc of costCenters" [value]="loc">
+                          {{loc.name}}
+                        </mat-option>
+                      </mat-optgroup>
+      
+                    </mat-select>
+                    <mat-error *ngIf="orderFormGroup.controls['origin'].hasError('required')">
+                      Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+                  </mat-form-field>
+      
+                  <mat-form-field style="flex-grow: 1;margin:5px;">
+                    <mat-label *ngIf="!isLoadingDestinations" >Destino(*) </mat-label>
+                    <mat-label *ngIf="isLoadingDestinations"  ><mat-spinner diameter="20"></mat-spinner></mat-label>
+                    <mat-select  formControlName="destination">
+                        <mat-option  *ngFor="let option of (destinations$ | async)?.data" [value]="option">
+                          {{option.name}}
+                        </mat-option>
+                    </mat-select>       
+                    <mat-error *ngIf="orderFormGroup.controls['destination'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+                  </mat-form-field>
+                </span>
+      
+                <span [hidden]="movementDefaultInfoSet==false" style="display: flex; flex-wrap: wrap;">
+                  <mat-chip-list>
+                    <mat-chip color="primary" selected>Bodega: {{orderFormGroup.controls['origin']?.value?.name}}</mat-chip>
+                    <mat-chip color="primary" selected>Destino: {{orderFormGroup.controls['destination']?.value?.name}}</mat-chip>
+                  </mat-chip-list>
+                </span>
+      
+                <mat-form-field style="flex-grow: 1;margin:5px;">
+                  <input formControlName="comment" matInput placeholder="Comentarios" value="">
+                </mat-form-field>
+      
+              </div>
+            </mat-card-content>
+          </mat-card>
+      
+          <span  [hidden]="!(orderFormGroup.controls['destination']?.value)">
+            <mat-card class="inner-card">
+              <mat-card-header>
+                <mat-card-title>
+                  Añadir artículos
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content style="padding:15px;">
+      
+                <form [formGroup]="articleFormGroup">
+      
+                  <supplying-article-autocomplete 
+                    [institution]="currentInstitution"
+                    [origin]="orderFormGroup.controls['_origin']?.value" 
+                    [destination] = "orderFormGroup.controls['destination']?.value" 
+                    formControlName="article">
+                  </supplying-article-autocomplete>
+      
+                  <br>
+                  <mat-form-field style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                    <input matInput value="1" placeholder="Cantidad" formControlName='quantityInput'>
+                    <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('required')">
+                      Este campo es <strong>obligatorio</strong>
+                    </mat-error>
+                    <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('pattern')">
+                      Este campo debe ser un número
+                    </mat-error>
+                    <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('min')">
+                      Este campo debe ser mayor que cero
+                    </mat-error>
+      
+                  </mat-form-field>
+      
+                  <button
+                    [disabled]="articleFormGroup.controls['article'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('pattern') || articleFormGroup.controls['quantityInput'].hasError('min')"
+                    (click)="addArticle()" mat-stroked-button color="primary">Agregar al listado</button>
+      
+                </form>
+              </mat-card-content>
+            </mat-card>
+      
+            <mat-card class="inner-card">
+              <mat-card-header>
+                <mat-card-title>
+                  Artículos de la orden
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content style="padding:15px;">
+                <div class="order-container">
+      
+                  <mat-table [class.isMobile]="isMobile" [dataSource]="dataSource" formArrayName="articles">
+      
+                    <ng-container cdkColumnDef="article_code">
+                      <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                        {{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }}</mat-header-cell>
+                      <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                        <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ARTICLE_CODE_' | translate }}:</span>
+                        <app-article-info [id]="element.article_id" [code]="element.article_code"></app-article-info>
+      
+                      </mat-cell>
+                    </ng-container>
+      
+                    <ng-container cdkColumnDef="article_name">
+                      <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                        {{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}</mat-header-cell>
+                      <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                        <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ARTICLE_NAME_' | translate }}:</span>
+                        {{element.article_name}}
+                      </mat-cell>
+                    </ng-container>
+      
+                    <ng-container cdkColumnDef="quantity">
+                      <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                        {{ 'SUPPLYING.ORDER._QUANTITY_' | translate }}</mat-header-cell>
+                      <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                        <mat-form-field style="padding:5px;">
+                          <input matInput formControlName="quantity">
+                        </mat-form-field>
+      
+                      </mat-cell>
+                    </ng-container>
+      
+                    <ng-container cdkColumnDef="actions">
+                      <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                        {{ 'SUPPLYING.ORDER._ACTIONS_' | translate }}</mat-header-cell>
+                      <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                        <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ACTIONS_' | translate }}:</span>
+                        <button (click)="removeArticle(rowIndex)" mat-button color="primary">Quitar</button>
+                      </mat-cell>
+                    </ng-container>
+      
+                    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *cdkRowDef="let row;  let index = index; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+      
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </span>
+      
+          <mat-card class="inner-card">
+            <mat-card-content style="padding:15px;">
+              <span fxLayout="row">
+                <button [disabled]="articleList.length == 0" (click)="send()" style="width: 100%;" mat-raised-button
+                  color="accent">
+                  <mat-icon>border_color</mat-icon> Crear pedido
+                </button>
+              </span>
+            </mat-card-content>
+          </mat-card>
+      
+      
+      </form>
+  </span>
+
+  <span *ngIf="!currentModule"> 
+    <h1 style="text-align: center;">
+      <mat-icon [inline]="true">warning</mat-icon>
+    </h1>
+    <h4 style="text-align: center;">
+      Error al acceder la página solicitada.
+    </h4>
+  </span>
+  
+
+
+</div>

@@ -1,0 +1,77 @@
+{
+    "_CELLAR_": "Cellar",
+    "_ARTICLE_": "Article",
+    "_SUPPLYING_": "Supplying",
+    "_SERVICE_": "Servicio",
+    "_PURCHASE_ORDER_": "Purchase order",
+    "_BACK_": "Back",
+    "_ORDERS_": "Orders",
+    "_MANUAL_PURCHASE_ORDER_": "Manual purchase order",
+    "NAVBAR":{
+        "_HOME_": "Home",
+        "_CLOSE_SESSION_": "Close session",
+        "_CHANGE_PROFILE_": "Change profile",
+        "_CELLAR_": "Cellar",
+        "_ARTICLE_": "Article",
+        "_PURCHASE_ORDER_": "Purchase order",
+        "_PURCHASE_ORDER_DETAIL_": "Purchase order detail",
+        "_LIST_PURCHASE_ORDERS_": "List purchase",
+        "_CELLAR_ADJUSTMENT_": "Cellar adjustment",
+        "_LIST_ARTICLE_": "List article",
+        "_BINCARD_": "Bincard",
+        "_ORDERS_": "Orders",
+        "_PROCESS_MASSIVE_CODIFICATION_": "Massive Codification",
+        "_MASSIVE_CODDING_DATA_": "Massive Codification",
+        "_ADMINISTRATION_": "Administration",
+        "_LIST_PROVIDER_": "Provider",
+        "_LIST_LOCATION_": "Location",
+        "_LIST_USERS_": "Users",
+        "_LIST_PROVIDERS_": "Providers",
+        "_LIST_PROFILES_": "Profiles",
+        "_DETAIL_INSTITUTION_": "Institutions",
+        "_LIST_AGREEMENT_": "Agreements",
+        "_LIST_COST_CENTERS_": "Cost Center",
+        "_LIST_LOCATIONS_": "Locations",
+        "_LIST_SERVICE_": "Services"
+    },
+    "HOME":{
+        "_DASHBOARD_": "Dashboard"
+    },
+    "SUPPLYING":{
+        "PURCHASE_ORDER":{
+            "_CELLAR_": "Cellar",
+            "_PURCHASE_ORDERS_": "Purchase orders",
+            "_PURCHASE_ORDER_DETAIL_": "Purchase order detail",
+            "_CODE_": "Code",
+            "_STATE_": "State",
+            "_COMMENT_": "Comment",
+            "_PROVIDER_": "Provider",
+            "_AMOUNT_": "Amount",
+            "_CREATED_": "Created",
+            "_ENCODE_": "Encode",
+            "_ENCODE_EARRINGS_": "Encode earrings",
+            "_RECEIVE_PURCHASE_ORDER_": "Receive purchase order",
+            "_RECORD_": "Record",
+            "_ASSIGN_TO": "Assign to",
+            "_TRANSFER_REQUESTS_": "Movimientos",
+            "_INTERMEDITATOR_": "Intermediación"
+        },
+        "ARTICLE":{
+            "_BINCARD_": "Bincard",
+            "_CELLAR_": "Cellar",
+            "_ENTRY_STOCK_": "Entry stock",
+            "_EXIT_STOCK_": "Exit stock",
+            "_MOVEMENT_DATE_": "Movement date",
+            "_MOVEMENT_TYPE_": "Movement type",
+            "_STOCK_": "Stock",
+            "_ORIGIN_": "Origin",
+            "_DESTINATION_": "Destination",
+            "_N_ORDER_": "N° order"
+        },
+        "ORDER": {
+            "_REQUESTED_": "REQUESTD",
+            "_TRANSIT_": "IN TRANSIT",
+            "_FINISHED_": "FINISED"
+        }
+    }
+}

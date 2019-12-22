@@ -1,0 +1,551 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+
+  <div *ngIf="movement">
+
+
+    <div style="display: flex; flex-wrap: wrap; Justify-content: space-around;">
+
+      <mat-card class="inner-card">
+        <mat-card-header>
+          <mat-card-title>
+            Orden de compra
+            <span *ngIf="ocType == 'SERVICE'"> de servicio </span>
+            <span *ngIf="ocType == 'ARTICLE'"> de artículos </span>
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content style="padding:15px;">
+
+          <span fxLayout class="info-line-container">
+
+            <div class="info-line">
+              <div class="title blue">Código OC</div>
+              <div class="info">{{document.code}}</div>
+            </div>
+            <div class="info-line">
+              <div class="title blue">Código Licitación</div>
+              <div class="info">{{document.bidding_code}}</div>
+            </div>
+            <div class="info-line">
+              <div class="title blue">Creado</div>
+              <div class="info">{{document.created_at| date:'shortDate'}}</div>
+            </div>
+            <div class="info-line">
+              <div class="title blue">Estado</div>
+              <div class="info">{{movement.movement_state.name | uppercase}}</div>
+            </div>
+            <div class="info-line">
+              <div class="title blue">Tipo</div>
+              <div class="info">{{movement.movement_type.name | uppercase}}</div>
+            </div>
+          </span>
+        </mat-card-content>
+
+        <mat-card-header>
+          <mat-card-title>
+            Valor orden de compra
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="padding:15px;">
+          <span fxLayout class="info-line-container">
+
+            <div class="info-line-2">
+              <div class="title blue">Monto neto</div>
+              <div class="info">{{document.purchase_amount | currency:'CLP' }}</div>
+            </div>
+
+            <div class="info-line-2">
+              <div class="title blue">Cargo</div>
+              <div class="info">{{charge_oc | currency:'CLP' }}</div>
+            </div>
+
+            <div class="info-line-2">
+              <div class="title blue">Descuento</div>
+              <div class="info">{{discount_oc | currency:'CLP' }}</div>
+            </div>
+
+            <div class="info-line-2">
+              <div class="title blue"> {{tax_name}}</div>
+              <div class="info">{{total_oc  - discount_oc + charge_oc | taxN:tax.id | currency:'CLP' }}</div>
+            </div>
+
+            <div class="info-line-2">
+              <div class="title blue">Total</div>
+              <div class="info">{{(total_oc  - discount_oc + charge_oc | taxV:tax.id)| currency:'CLP' }}</div>
+            </div>
+
+          </span>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <span fxLayout="row">
+            <button [disabled]="canRecept==false" *ngIf="priv_canRecept" style="width: 100%;"
+              routerLink="/supplying/purchase-orders/reception/{{code}}" mat-raised-button color="accent">
+              <mat-icon>border_color</mat-icon> Recepcionar orden de compra
+            </button>
+          </span>
+        </mat-card-actions>
+
+      </mat-card>
+
+
+      <mat-card class="inner-card">
+        <mat-card-header>
+          <mat-card-title>
+            Proveedor
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="padding:15px;">
+
+          <span fxLayout class="info-line-container">
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">info</mat-icon> Nombre
+              </div>
+              <div class="info">{{provider.business_name | uppercase}}</div>
+            </div>
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">check_box</mat-icon>Rut
+              </div>
+              <div class="info">{{provider.run | uppercase}}</div>
+            </div>
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">place</mat-icon>Dirección
+              </div>
+              <div class="info">{{provider.address | uppercase}}</div>
+            </div>
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">place</mat-icon>Comuna
+              </div>
+              <div class="info">{{provider.commune | uppercase}}</div>
+            </div>
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">layers</mat-icon>Código sucursal
+              </div>
+              <div class="info">{{provider.branch_office_code }}</div>
+            </div>
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">mail</mat-icon>Correo contacto
+              </div>
+              <div class="info">{{provider.contact_email | uppercase}}</div>
+            </div>
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">phone</mat-icon>Teléfono contacto
+              </div>
+              <div class="info">{{provider.contact_phone | uppercase}}</div>
+            </div>
+
+            <div class="info-line">
+              <div class="title blue">
+                <mat-icon inline style="margin-right: 5px;">person_pin</mat-icon>Nombre contacto
+              </div>
+              <div class="info">{{provider.contact_name | uppercase}}</div>
+            </div>
+
+          </span>
+
+        </mat-card-content>
+        <mat-card-header>
+          <mat-card-title>
+            Comentario
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="padding:15px;">
+          <p>{{document.comment}}</p>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+
+    <div style="display: flex; flex-wrap: wrap; Justify-content: space-around;">
+
+      <div class="inner-card">
+
+        <mat-card-content>
+
+          <mat-tab-group style="min-height: 400px;">
+
+            <mat-tab *ngIf="transferElementCount>0">
+              <ng-template mat-tab-label>
+                <mat-icon matBadge="{{transferElementCount}}" matBadgeColor="accent" matBadgeSize="medium">spellcheck
+                </mat-icon> Pendientes de codificación
+              </ng-template>
+
+
+              <div style="display: flex; flex-wrap: wrap; Justify-content: space-around; height: 100%;">
+
+
+                <span style="flex-basis: 50%;flex-grow: 1;">
+                  <table mat-table [dataSource]="detailTransferDataSource" style="width: 100%;">
+
+                    <ng-container matColumnDef="comment">
+                      <th mat-header-cell *matHeaderCellDef width="80%"> Glosa </th>
+                      <td mat-cell *matCellDef="let element">
+
+                        <p *ngIf="!element._name">
+                          {{element.comment}}
+                        </p>
+                        <p *ngIf="element._name">
+                          {{element._name}}
+                        </p>
+
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action" >
+                      <th mat-header-cell *matHeaderCellDef width="10%"> </th>
+                      <td mat-cell *matCellDef="let element">
+                        <button mat-button color="primary" *ngIf="priv_canCodificate"
+                          (click)="selectTransferForEdition(element);">Codificar</button>
+                      </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="status">
+                      <th mat-header-cell *matHeaderCellDef width="10%"> </th>
+                      <td mat-cell *matCellDef="let element">
+                        <span *ngIf="element._edited">
+                          <mat-icon>check_circle</mat-icon>
+                        </span>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="detailTransferDisplayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: detailTransferDisplayedColumns;"></tr>
+
+
+                  </table>
+                  <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons #transferPaginator></mat-paginator>
+                </span>
+
+
+                <div style="flex-basis: 50%;flex-grow: 1;" *ngIf="selectedTransfer">
+                  <mat-card class="inner-card" style="flex-grow: 1;">
+                    <mat-card-header>
+                      <mat-card-title>
+                        Codificar
+                      </mat-card-title>
+                    </mat-card-header>
+
+                    <mat-card-content
+                      style="height: 100%; min-height: 300px;padding:10px;display: flex; flex-wrap: wrap; Justify-content: space-around;  ">
+
+                      <form style="width: 100%;" [formGroup]="detailTransferFormGroup">
+
+
+                        <span fxLayout="row" style="margin:15px;">
+                          <p>{{selectedTransfer.comment}}</p>
+                        </span>
+
+                        <span fxLayout="row" style="margin-top:15px;" *ngIf="!selectedTransfer._temporaryTarget">
+
+                          <mat-radio-group matInput formControlName="transferRadioButton"
+                            [(ngModel)]="selectedTransfer._type" aria-label="Seleccione una opcion">
+
+                            <mat-radio-button [disabled]="ocType == 'SERVICE'" value="ARTICLE">Artículo
+                            </mat-radio-button>
+                            <mat-radio-button [disabled]="ocType == 'ARTICLE'" style="margin-left:25px" value="SERVICE">
+                              Servicio</mat-radio-button>
+
+                          </mat-radio-group>
+
+                        </span>
+
+
+                        <span fxLayout="row" style="margin-top: 15px;" *ngIf="!selectedTransfer._temporaryTarget">
+
+                            <supplying-article-autocomplete 
+                            style="width: 100%;"
+                            [service] = "(selectedTransfer._type=='SERVICE')?true:false"
+                            (ArticleChange)="onSelectedTransferOption($event)"
+                            >
+                          </supplying-article-autocomplete>
+
+                        </span>
+
+                        <span fxLayout="row" style="margin-top: 15px;width: 100%;">
+                          <span *ngIf="selectedTransfer._temporaryTarget" style="width: 100%;min-width: 400px;">
+                            <mat-chip-list style="width:fit-content">
+                              <mat-chip style="width: fit-content;min-height: 50px;text-align: center;"
+                                (removed)="removeTemporaryTransfer()">
+                                {{ selectedTransfer._temporaryTarget.name }}
+                                <span style="margin-left: 2px;font-size: 12px;color:#689FD1;"
+                                  *ngIf="selectedTransfer._type == 'SERVICE'">
+                                  Servicio
+                                </span>
+                                <span style="margin-left: 2px;font-size: 12px;color:#689FD1;"
+                                  *ngIf="selectedTransfer._type == 'ARTICLE'">
+                                  Artículo
+                                </span>
+                                <mat-icon matChipRemove>cancel</mat-icon>
+                              </mat-chip>
+                            </mat-chip-list>
+                          </span>
+                        </span>
+
+                        <span fxLayout="row" fxLayoutAlign="stretch" style="margin-top:15px;">
+                          <button *ngIf="!selectedTransfer._edited" [disabled]="!selectedTransfer._temporaryTarget"
+                            mat-raised-button color="primary" (click)="editTransfer()">
+                            <mat-icon inline>check</mat-icon> Editar
+                          </button>
+                          <button *ngIf="!selectedTransfer._edited" mat-raised-button color="warn"
+                            style="margin-left:15px;" (click)="cancelTransfer()"> Cancelar</button>
+                          <button *ngIf="selectedTransfer._edited" mat-raised-button color="warn"
+                            (click)="closeTransferWindow()"> Cancelar</button>
+                        </span>
+
+
+                      </form>
+
+
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+
+                <span style="flex-basis: 100%;flex-grow: 1;margin:15px;">
+                  <button [disabled]="editedTransfersCount<1" mat-stroked-button color="primary"
+                    (click)="saveAllTransfers()">
+                    Confirmar cambios
+                    <span *ngIf="editedTransfersCount>0">
+                      ({{editedTransfersCount}})
+                    </span>
+                  </button>
+                </span>
+
+              </div>
+            </mat-tab>
+
+            <mat-tab *ngIf="articleElementCount>0">
+              <ng-template mat-tab-label>
+                <mat-icon matBadge="{{articleElementCount}}" matBadgeSize="medium">reorder</mat-icon> Artículos
+              </ng-template>
+
+              <table mat-table [dataSource]="detailArticleDataSource" style="width: 100%">
+
+                <ng-container matColumnDef="id">
+                  <th width="5%" mat-header-cell *matHeaderCellDef> ID </th>
+                  <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="charge">
+                  <th mat-header-cell *matHeaderCellDef> Cargo </th>
+                  <td mat-cell *matCellDef="let element"> {{element.charge | iva:withIva | currency:'CLP' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="comment">
+                  <th width="30%" mat-header-cell *matHeaderCellDef> Glosa </th>
+                  <td mat-cell *matCellDef="let element">
+                    <p *ngIf="!element.article_name">
+                      {{element.comment}}
+                    </p>
+                    <p *ngIf="element.article_name">
+                      {{element.article_name}}
+                    </p>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="discount">
+                  <th mat-header-cell *matHeaderCellDef> Descuento </th>
+                  <td mat-cell *matCellDef="let element"> {{element.discount | iva:withIva | currency:'CLP' }} </td>
+                </ng-container>
+
+
+                <ng-container matColumnDef="provider_product_code">
+                  <th mat-header-cell *matHeaderCellDef> Código artículo </th>
+                  <td mat-cell *matCellDef="let element">
+                    <app-article-info [id]="element.article_id" [code]="element.article_code"></app-article-info>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="quantity">
+                  <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+                  <td mat-cell *matCellDef="let element"> {{element._total_recept}} de {{element.quantity}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="unit_value">
+                  <th mat-header-cell *matHeaderCellDef> Valor unitario </th>
+                  <td mat-cell *matCellDef="let element"> {{element.unit_value | iva:withIva | currency:'CLP' }} </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="tax_amount">
+                  <th mat-header-cell *matHeaderCellDef> Impuesto </th>
+                  <td mat-cell *matCellDef="let element"> {{element.tax_amount | iva:withIva | currency:'CLP' }} </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="subtotal">
+                  <th mat-header-cell *matHeaderCellDef> Subtotal </th>
+                  <td mat-cell *matCellDef="let element"> {{element.subtotal - element.discount + element.charge + element.tax_amount| currency:'CLP' }} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="detailArticleDisplayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: detailArticleDisplayedColumns;"></tr>
+
+              </table>
+
+              <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+
+            </mat-tab>
+
+            <mat-tab label="Servicios" *ngIf="serviceElementCount>0">
+
+              <ng-template mat-tab-label>
+                <mat-icon matBadge="{{serviceElementCount}}" matBadgeSize="medium">reorder</mat-icon> Servicios
+              </ng-template>
+
+              <table mat-table [dataSource]="detailServiceDataSource" style="width: 100%">
+
+                <ng-container matColumnDef="id">
+                  <th width="5%" mat-header-cell *matHeaderCellDef> ID </th>
+                  <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="charge">
+                  <th mat-header-cell *matHeaderCellDef> Cargo </th>
+                    let detail_transfer = TotalTransferByItem(this.movement.detail_transfer)
+                  <td mat-cell *matCellDef="let element"> {{element.charge | iva:withIva  | currency:'CLP' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                  <th width="30%" mat-header-cell *matHeaderCellDef> Nombre </th>
+                  <td mat-cell *matCellDef="let element"> {{element.service_name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="discount">
+                  <th mat-header-cell *matHeaderCellDef> Descuento </th>
+                  <td mat-cell *matCellDef="let element"> {{element.discount | iva:withIva  | currency:'CLP' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="provider_product_code">
+                  <th mat-header-cell *matHeaderCellDef> Código de servicio </th>
+                  <td mat-cell *matCellDef="let element"> {{element.service_code}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="quantity">
+                  <th mat-header-cell *matHeaderCellDef> Cantidad </th>
+                  <td mat-cell *matCellDef="let element"> {{element.quantity }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="subtotal">
+                  <th mat-header-cell *matHeaderCellDef> Subtotal </th>
+                  <td mat-cell *matCellDef="let element"> {{element.subtotal - element.discount + element.charge + element.tax_amount | currency:'CLP' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="tax_amount">
+                  <th mat-header-cell *matHeaderCellDef> Impuesto </th>
+                  <td mat-cell *matCellDef="let element"> {{element.tax_amount | iva:withIva  | currency:'CLP' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="unit_value">
+                  <th mat-header-cell *matHeaderCellDef> Valor unitario </th>
+                  <td mat-cell *matCellDef="let element"> {{element.unit_value | iva:withIva  | currency:'CLP' }} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="detailServiceDisplayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: detailServiceDisplayedColumns;"></tr>
+              </table>
+              <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+
+            </mat-tab>
+
+            <mat-tab *ngIf="transactions.length > 0" style="flex-grow: 1;flex-basis: 100%;">
+              <ng-template mat-tab-label>
+                <mat-icon matBadge="{{transactions.length}}" matBadgeSize="medium">how_to_vote</mat-icon> Recepcionados
+              </ng-template>
+
+              <div style="padding:15px;">
+                <span *ngFor="let article of transactions; let i = index; ">
+                  <mat-card-header class="mat-card-gray-header">
+                    <mat-card-subtitle>
+                      <b>{{article.created_at | date:'shortDate'  }} -</b>
+                      {{article.article.name | uppercase}} ({{article.article.code}})
+                    </mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content style="padding:15px;width: inherit;">
+
+                    <span fxLayout class="info-line-container">
+
+                      <div class="info-line-2" *ngIf="article.dispatch">
+                        <div class="title blue">Código de Recepción</div>
+                        <div class="info">{{article.dispatch}}</div>
+                      </div>
+
+                      <div class="info-line-2" *ngIf="article.quantity">
+                        <div class="title blue">Cantidad</div>
+                        <div class="info">{{article.quantity}}</div>
+                      </div>
+
+                      <div class="info-line-2" *ngIf="article.unit_value">
+                        <div class="title blue">Valor unitario</div>
+                        <div class="info">
+                          {{article.unit_value| iva:withIva  | currency:'CLP'}}</div>
+                      </div>
+
+                      <div class="info-line-2" *ngIf="article.subtotal">
+                        <div class="title blue">Subtotal</div>
+                        <div class="info">
+                          {{article.subtotal | iva:withIva  | currency:'CLP'  }}</div>
+                      </div>
+
+                      <div class="info-line-2" *ngIf="article.expiration_date">
+                        <div class="title blue">Fecha vencimiento</div>
+                        <div class="info">{{article.expiration_date | date:'shortDate'  }}
+                        </div>
+                      </div>
+
+                      <div class="info-line-2" *ngIf="article.n_serie">
+                        <div class="title blue">N° serie</div>
+                        <div class="info">{{article.n_serie   }}</div>
+                      </div>
+
+                      <div class="info-line-2" *ngIf="article.batch">
+                        <div class="title blue">Lote</div>
+                        <div class="info">{{article.batch }}</div>
+                      </div>
+                    </span>
+                  </mat-card-content>
+                </span>
+              </div>
+            </mat-tab>
+
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon matBadge="{{historyElementCount}}" matBadgeSize="medium">history</mat-icon> Historial
+              </ng-template>
+
+
+              <seis-movement-record [display-dispatch]="true"  *ngIf="historicalData" [data]="historicalData"></seis-movement-record>
+
+
+            </mat-tab>
+
+          </mat-tab-group>
+
+        </mat-card-content>
+
+
+      </div>
+
+    </div>
+  </div>
+  <div *ngIf="!movement">
+    No existe orden de compra
+  </div>
+
+</div>

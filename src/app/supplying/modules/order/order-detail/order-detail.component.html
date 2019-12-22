@@ -1,0 +1,191 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading"  > 
+    <form [formGroup]="orderFormGroup"   >
+
+      <seis-movement-header [Movement]="data" ></seis-movement-header>
+
+      <mat-card class="inner-card">
+
+        <button *ngIf="!isAuthorized && !finalState && !isCanceled" [disabled]="!canAuthorize" (click)="authorize()" mat-raised-button color="accent">
+          <mat-icon>check</mat-icon> Autorizar
+        </button>
+        <span style="flex-grow: 1;margin:5px;"></span>
+        <button *ngIf="!isAuthorized && canCancel && !finalState && !isCanceled" (click)="cancel()" mat-raised-button color="warn">
+          <mat-icon>clear</mat-icon> Cancelar
+        </button>
+  
+        <button *ngIf="isAuthorized && allowDispatchmentApproval" routerLink="/supplying/dispatches/recept/{{movementId}}/"   mat-raised-button color="accent">
+          <mat-icon>check</mat-icon> Revisar despachos
+        </button>
+
+      </mat-card>
+
+
+
+      <mat-tab-group style="min-height: 400px;" >
+
+
+        <mat-tab *ngIf="transitDispatches?.length"  >
+            <ng-template mat-tab-label>
+                <mat-icon matBadge="{{transitDispatches?.length}}" matBadgeSize="medium" >call_made</mat-icon> Artículos en tránsito 
+            </ng-template>
+
+            <span>
+                <seis-movement-dispatch-history [data]="transitDispatches"></seis-movement-dispatch-history>
+            </span>
+
+        </mat-tab>        
+
+        <mat-tab *ngIf="historicDispatches?.length"  >
+          <ng-template mat-tab-label>
+              <mat-icon matBadge="{{historicDispatches?.length}}" matBadgeSize="medium" >history</mat-icon> Artículos despachados 
+          </ng-template>
+
+          <span>
+              <seis-movement-dispatch-history [data]="historicDispatches"></seis-movement-dispatch-history>
+          </span>
+
+        </mat-tab>
+
+
+        <mat-tab *ngIf="allowDispatchmentApproval"  >
+          <ng-template mat-tab-label>
+              <mat-icon matBadge="{{articleList?.length}}" matBadgeSize="medium" >reorder</mat-icon> Artículos del pedido
+          </ng-template>
+
+          <span>
+            <seis-movement-article-list [data]="articleList"></seis-movement-article-list>
+          </span>
+
+        </mat-tab>
+
+        <mat-tab *ngIf="!allowDispatchmentApproval" >
+          <ng-template mat-tab-label>
+              <mat-icon matBadge="{{this.articleList?.length}}" matBadgeSize="medium" >reorder</mat-icon> Artículos del pedido
+          </ng-template>
+
+          <div class="order-container">
+
+              <mat-slide-toggle *ngIf="transitDispatches?.length==0 && historicDispatches?.length==0 && !isAuthorized && !finalState && !isCanceled" (click)="activeEditMode();">Editar</mat-slide-toggle>
+              <br>
+                  
+              <mat-table  [class.isMobile]="isMobile" [dataSource]="dataSource" formArrayName="articles">
+
+                <ng-container cdkColumnDef="article_code">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }} </mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span class="mobile-label blue">{{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }}:</span>
+                    <app-article-info [id]="element.article_id" [code]="element.article_code" ></app-article-info>
+
+                  </mat-cell>
+                </ng-container>
+            
+                <ng-container cdkColumnDef="article_name">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <span class="mobile-label blue">{{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}:</span>
+                    {{element.article_name}}
+                  </mat-cell>
+                </ng-container>
+
+                <ng-container cdkColumnDef="quantity">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._QUANTITY_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                    <mat-form-field style="padding:5px;">
+                      <input matInput  formControlName="quantity" >
+                      <mat-error *ngIf="orderFormGroup.controls['articles'].controls[rowIndex]?.controls['quantity'].hasError('pattern')">
+                        Este campo debe ser un número
+                      </mat-error>
+                      <mat-error *ngIf="orderFormGroup.controls['articles'].controls[rowIndex]?.controls['quantity']?.hasError('min')">
+                        Este campo debe ser mayor que cero
+                      </mat-error>
+
+                    </mat-form-field>
+                    
+                  </mat-cell>
+                </ng-container>                  
+      
+                <ng-container cdkColumnDef="actions">
+                  <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                    {{ 'SUPPLYING.ORDER._ACTIONS_' | translate }}</mat-header-cell>
+                  <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                             
+                    <button *ngIf="transitDispatches?.length==0 && historicDispatches?.length==0 " [disabled]="editMode==false" (click)="removeArticle(rowIndex)" mat-button color="primary">Quitar</button>
+                  </mat-cell>
+                </ng-container>                  
+
+                <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *cdkRowDef="let row;  let index = index; columns: displayedColumns;"></mat-row>
+              </mat-table>  
+
+          </div>   
+
+          <span style="display: flex; flex-wrap: wrap;">
+    
+              <mat-card *ngIf="editMode == true" style="padding: 0px !important; flex-basis: 50%; flex-grow: 1;">
+                <mat-card-header class="mat-card-gray-header">
+                  <mat-card-subtitle>
+                      <mat-icon [inline]="true">add</mat-icon> Agregar artículo
+                  </mat-card-subtitle>                  
+                </mat-card-header>
+                <mat-card-content style="padding:15px;">
+
+                  <form [formGroup]="articleFormGroup"  class="order-container" style="margin:5px;">
+
+                    <supplying-article-autocomplete [institution]="currentInstitution" [origin]="origin"  formControlName="article"></supplying-article-autocomplete>
+
+                    <mat-form-field class="mobile-form-input" style="flex-basis: 60%; flex-grow: 1;width: 100%;">
+                      <input matInput value="1" placeholder="Cantidad" formControlName='quantityInput'>
+                      <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('required')">
+                        Este campo es <strong>obligatorio</strong>
+                      </mat-error>    
+                      <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('pattern')">
+                        Este campo debe ser un número
+                      </mat-error>    
+                      <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('min')">
+                        Este campo debe ser mayor que cero
+                      </mat-error>    
+      
+                    </mat-form-field>
+      
+                    <br>
+                    <button style="margin-left: 5px;"  [disabled]="articleFormGroup.controls['article'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('pattern') || articleFormGroup.controls['quantityInput'].hasError('min')" (click)="addArticle()" mat-stroked-button color="primary">Agregar al listado</button>
+      
+                  </form>   
+                </mat-card-content>
+
+              </mat-card>
+
+          </span>
+            
+          <button (click)="send()" *ngIf="editMode == true" mat-raised-button color="primary">
+            <mat-icon [inline]="true" >edit</mat-icon>  Guardar cambios
+          </button>
+
+        </mat-tab>
+
+        <mat-tab *ngIf="historicalData?.length"  >
+            <ng-template mat-tab-label>
+                <mat-icon matBadge="{{historyElementCount}}" matBadgeSize="medium" >history</mat-icon> Historial
+            </ng-template>
+  
+            <span>
+              <seis-movement-record  [data]="historicalData"></seis-movement-record>
+            </span>
+  
+        </mat-tab>
+
+
+      </mat-tab-group>
+
+
+    
+
+    </form>
+</div>

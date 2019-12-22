@@ -1,0 +1,310 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading ">
+
+  <form [formGroup]="movementFormGroup">
+
+    <mat-card class="inner-card">
+      <mat-card-header>
+        <mat-card-title>
+          MOVIMIENTO DE PRODUCTOS
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="padding:15px;">
+
+        <div class="order-container">
+
+          <span style="display: flex; flex-wrap: wrap;">
+
+            <mat-form-field appearance="outline" style="flex-grow: 1;margin:5px;">
+              <mat-label>Tipo de movimiento(*) </mat-label>
+              <mat-select *ngIf="!movementFormGroup.value?.movementType" formControlName="movementType">
+                <mat-option selected="0" *ngFor="let mt of movementTypes" [value]="mt">
+                  {{mt.name}}
+                </mat-option>
+              </mat-select>
+              <mat-chip-list style="flex-grow: 1;margin:5px;" *ngIf="movementFormGroup.value?.movementType"
+                style="height: 10px;">
+                <mat-chip selected style="height: 10px;">
+                  {{ (movementFormGroup.value.movementType.name.length>20)? (movementFormGroup.value.movementType.name | slice:0:20)+'..':(movementFormGroup.value.movementType.name) }}
+                </mat-chip>
+              </mat-chip-list>
+              <mat-error *ngIf="movementFormGroup.controls['movementType'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" style="flex-grow: 1;margin:5px;">
+              <mat-label>Bodega origen (*)</mat-label>
+              <mat-select *ngIf="!movementFormGroup.value.origin" formControlName="origin">
+                <mat-option selected="0" *ngFor="let loc of locations" [value]="loc">
+                  {{loc.name}}
+                </mat-option>
+              </mat-select>
+              <mat-chip-list style="flex-grow: 1;margin:5px;" *ngIf="movementFormGroup.value?.origin"
+                style="height: 10px;">
+                <mat-chip selected style="height: 10px;">
+                  {{ (movementFormGroup.value.origin.name?.length>15)? (movementFormGroup.value.origin.name | slice:0:15)+'..':(movementFormGroup.value.origin.name) }}
+                </mat-chip>
+              </mat-chip-list>
+
+              <mat-error *ngIf="movementFormGroup.controls['origin'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" style="flex-grow: 1;margin:5px;">
+              <mat-label *ngIf="!isLoadingDestinations">Bodega Destino(*) </mat-label>
+              <mat-label *ngIf="isLoadingDestinations">
+                <mat-spinner diameter="20"></mat-spinner>
+              </mat-label>
+              <mat-select *ngIf="!movementFormGroup.value.destination" formControlName="destination">
+                <mat-option *ngFor="let option of (destinations$ | async)?.data" [value]="option">
+                  {{option.name}}
+                </mat-option>
+              </mat-select>
+              <mat-chip-list style="flex-grow: 1;margin:5px;" *ngIf="movementFormGroup.value?.destination"
+                style="height: 10px;">
+                <mat-chip selected style="height: 10px;">
+                  {{movementFormGroup.value.destination.name}}
+                </mat-chip>
+              </mat-chip-list>
+
+              <mat-error *ngIf="movementFormGroup.controls['destination'].hasError('required')">
+                Este campo es <strong>obligatorio</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <span style="color:blue;">
+              <button [hidden]="movementDefaultInfoSet==true"
+                [disabled]="!movementFormGroup.value.movementType && !movementFormGroup.value.origin && !movementFormGroup.value.destination"
+                (click)="removeMovementFilters()" mat-raised-button style="width: 100%;margin-top:15px;">
+                <mat-icon>clear_all</mat-icon> Limpiar
+              </button>
+            </span>
+
+          </span>
+
+          <span style="margin:15px;">
+
+            <mat-checkbox formControlName="reverse_origin"
+              *ngIf="this.movementFormGroup.value.movementType?.is_switchable">
+              <b>Intercambiar origen-destino</b>
+              <mat-icon class="swap-icon" style="font-size: 25px;" inline>swap_horiz</mat-icon>
+            </mat-checkbox>
+
+            <seis-movement-description-card
+              [location-A]="(movementFormGroup.value?.reverse_origin) ? this.movementFormGroup.value.destination?.name:this.movementFormGroup.value.origin?.name"
+              [location-B]="(movementFormGroup.value?.reverse_origin) ? this.movementFormGroup.value.origin?.name:this.movementFormGroup.value.destination?.name"
+              [movement]="this.movementFormGroup.value.movementType">
+            </seis-movement-description-card>
+          </span>
+
+
+          <mat-form-field appearance="outline" style="flex-grow: 1;margin:5px;">
+            <textarea appearance="outline" formControlName="comment" matInput placeholder="Comentarios"
+              value=""></textarea>
+          </mat-form-field>
+
+          <span [ngSwitch]="this.movementFormGroup.value.movementType?.id">
+            <span *ngSwitchCase="0"></span>
+            <span *ngSwitchDefault></span>
+          </span>
+
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="inner-card"
+      [hidden]="!(movementFormGroup.controls['movementType'].value?.type_unique_accion==2 ? movementFormGroup.controls['_destination']?.value : movementFormGroup.controls['_origin']?.value)">
+      <mat-card-header>
+        <mat-card-title>
+          Añadir artículos
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="padding:15px;">
+
+        <form [formGroup]="articleFormGroup">
+
+          <supplying-article-autocomplete [institution]="currentInstitution"
+            [origin]="(movementFormGroup.controls['movementType'].value?.type_unique_accion==2 ? movementFormGroup.controls['_destination']?.value : movementFormGroup.controls['_origin']?.value)"
+            [destination]="(movementFormGroup.controls['movementType'].value?.type_unique_accion!=2 ? movementFormGroup.controls['_destination']?.value : movementFormGroup.controls['_origin']?.value)"
+            [locationType]="movementFormGroup.controls['movementType'].value?.location_type" formControlName="article">
+          </supplying-article-autocomplete>
+          <br>
+          <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+            <input matInput value="1" placeholder="Cantidad" formControlName='quantityInput'>
+            <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>
+            <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('pattern')">
+              Este campo debe ser un número
+            </mat-error>
+            <mat-error *ngIf="articleFormGroup.controls['quantityInput'].hasError('min')">
+              Este campo debe ser mayor que cero
+            </mat-error>
+          </mat-form-field>
+          <!-- 
+          <mat-form-field *ngIf="(articles[i].article_is_perishable == true)" fxFlex="1 1 auto">
+            <input (focus)="picker.open()" formControlName="expiration_date" matInput
+              [min]="today" [matDatepicker]="picker" placeholder="Fecha de vencimiento">
+            <mat-datepicker-toggle matSuffix [for]="picker">
+            </mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="batch.controls['expiration_date'].hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="1 1 auto">
+            <input formControlName="batch" matInput placeholder="Lote (*)">
+            <mat-error *ngIf="batch.controls['batch'].hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="1 1 auto">
+            <input formControlName="n_serie" matInput placeholder="N° de serie (*)">
+            <mat-error *ngIf="batch.controls['n_serie'].hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <button (click)="removeBatch( j, article.get('batchs') )" type="button"
+            [disabled]="article.get('batchs').controls.length==1" fxFlex="1 1 auto" mat-button
+            color="warn">Quitar
+            lote</button>
+            -->
+
+          <div *ngIf="isLoadingArticleStockInfo && articleFormGroup.controls['article'].value!=''">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+          <div
+            *ngIf="articleFormGroup.controls['article'].value!='' && !isLoadingArticleStockInfo && (articleInfo$ | async) as articleInfo ">
+            <p *ngIf="articleInfo.real_stock>0">Stock disponible: <span class="blue">{{articleInfo.real_stock}}</span> </p>
+
+            <!-- Validacion visual -->
+            <div *ngIf="!movementFormGroup.value.reverse_origin">
+              <p *ngIf="articleInfo.real_stock==0 && this.movementFormGroup.value.origin?.type.id != 6" style="color:red">No hay stock disponible</p>
+              <button
+              [disabled]="((articleInfo.real_stock==0) || (articleInfo.real_stock < articleFormGroup.controls['quantityInput'].value ) || articleFormGroup.controls['article'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('pattern') || articleFormGroup.controls['quantityInput'].hasError('min')) && this.movementFormGroup.value.origin?.type.id != 6"
+              (click)="addArticle(articleInfo)" mat-stroked-button color="primary">Agregar al listado</button>
+            </div>
+
+            <div *ngIf="movementFormGroup.value.reverse_origin">
+              <p *ngIf="articleInfo.real_stock==0 && this.movementFormGroup.value.destination?.type.id != 6" style="color:red">No hay stock disponible</p>
+              <button
+              [disabled]="((articleInfo.real_stock==0) || (articleInfo.real_stock < articleFormGroup.controls['quantityInput'].value ) || articleFormGroup.controls['article'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('required') || articleFormGroup.controls['quantityInput'].hasError('pattern') || articleFormGroup.controls['quantityInput'].hasError('min')) && this.movementFormGroup.value.destination?.type.id != 6"
+              (click)="addArticle(articleInfo)" mat-stroked-button color="primary">Agregar al listado</button>
+            </div>
+            <!-- -- -->
+
+          </div>
+
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="inner-card"
+      *ngIf="(movementFormGroup.controls['movementType'].value?.type_unique_accion==2 ? movementFormGroup.controls['_destination']?.value : movementFormGroup.controls['_origin']?.value)">
+      <mat-card-header>
+        <mat-card-title>
+          Artículos de la orden
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content style="padding:15px;">
+        <div class="order-container">
+
+
+
+          <mat-table [class.isMobile]="isMobile" [dataSource]="dataSource" formArrayName="articles">
+
+            <ng-container cdkColumnDef="article_code">
+              <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                {{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }}</mat-header-cell>
+              <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ARTICLE_CODE_' | translate }}:</span>
+                <app-article-info [id]="element.article_id" [code]="element.article_code"></app-article-info>
+
+              </mat-cell>
+            </ng-container>
+
+            <ng-container cdkColumnDef="article_name">
+              <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                {{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}</mat-header-cell>
+              <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ARTICLE_NAME_' | translate }}:</span>
+                {{element.article_name}}
+              </mat-cell>
+            </ng-container>
+
+
+
+            <ng-container cdkColumnDef="quantity">
+              <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                {{ 'SUPPLYING.ORDER._QUANTITY_' | translate }}</mat-header-cell>
+              <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                <mat-form-field style="padding:5px;">
+                  <input matInput formControlName="quantity">
+                </mat-form-field>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container cdkColumnDef="stock">
+              <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                {{ 'SUPPLYING.ORDER._STOCK_' | translate }}</mat-header-cell>
+              <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                <span class="mobile-label blue">{{ 'SUPPLYING.ORDER._STOCK_' | translate }}:</span>
+                {{element.article_max_stock}}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container cdkColumnDef="actions">
+              <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+                {{ 'SUPPLYING.ORDER._ACTIONS_' | translate }}</mat-header-cell>
+              <mat-cell *cdkCellDef="let element; let rowIndex = index;" [formGroupName]="rowIndex">
+                <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._ACTIONS_' | translate }}:</span>
+                <button (click)="removeArticle(rowIndex)" mat-button color="primary">Quitar</button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *cdkRowDef="let row;  let index = index; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="inner-card">
+      <mat-card-content style="padding:15px;">
+        <span fxLayout="row" style="display: flex; flex-direction: row;">
+
+          <div  style="margin:15px; flex-grow: 1" *ngIf="!movementFormGroup.value.reverse_origin">
+            <button style="width:100%"  [disabled]="(articleList.length == 0 || !movementFormGroup.valid) && this.movementFormGroup.value.origen?.type.id != 6" (click)="send()"
+               mat-raised-button color="accent">
+              <mat-icon>border_color</mat-icon> Crear movimiento
+            </button>
+          </div>
+          <div style="margin:15px; flex-grow: 1"  *ngIf="movementFormGroup.value.reverse_origin">
+            <button style="width:100%" [disabled]="(articleList.length == 0 || !movementFormGroup.valid) && this.movementFormGroup.value.destination?.type.id != 6" (click)="send()"
+              mat-raised-button color="accent">
+              <mat-icon>border_color</mat-icon> Crear movimiento
+            </button>
+          </div>
+          <div style="margin:15px; flex-grow: 1">
+            <button style="width:100%" (click)="clearForm()"  mat-raised-button>
+              <mat-icon>replay</mat-icon> Limpiar formulario
+            </button>
+        </div>
+        </span>
+      </mat-card-content>
+    </mat-card>
+
+  </form>
+
+</div>

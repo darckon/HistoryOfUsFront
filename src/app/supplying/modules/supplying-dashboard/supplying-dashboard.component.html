@@ -1,0 +1,6 @@
+<mat-card *ngFor="let prev of previlegeCategories[0].list"  class="description-card-container">
+  <span style="display: flex; width: 100%;">
+    <h3  routerLink="/{{prev.internal_url}}"  style="flex-grow: 1;cursor: pointer;"><mat-icon>{{prev.icon_class}}</mat-icon> {{prev.name}}</h3> 
+      
+  </span>
+</mat-card>    

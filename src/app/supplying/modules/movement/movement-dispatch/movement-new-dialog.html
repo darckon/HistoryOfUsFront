@@ -1,0 +1,12 @@
+<h1 mat-dialog-title style="text-align: center"> Nuevo movimiento</h1>
+
+<div style="width: 100%;" mat-dialog-content style="display: flex; flex-wrap: wrap; Justify-content: space-around;">
+    <p>El número del pedido es: <span class="blue">{{data.data.correlative}}</span></p>
+</div>
+
+<div mat-dialog-actions >
+    <button mat-button color="primary" (click)="accept()"  cdkFocusInitial>
+        <mat-icon>check</mat-icon> Aceptar
+    </button>
+</div>
+ 

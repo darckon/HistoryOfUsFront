@@ -1,0 +1,198 @@
+<div>
+  <form [formGroup]="filterGroup" fxLayoutAlign="start" fxLayoutGap="15px" fxLayout="row wrap">
+
+
+
+    <div fxLayout="row" fxLayoutAlign="space-around center" style="width: 100%;" >
+
+        <mat-form-field appearance="outline" fxFlex="1 1 auto" style="margin:5px">
+            <mat-label>Bodega(*) </mat-label>
+            <mat-select formControlName="cellarInput">
+              <mat-option selected="0" *ngFor="let loc of locations" [value]="loc">
+                  {{loc.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="filterGroup.controls['cellarInput'].hasError('required')">
+              Este campo es <strong>obligatorio</strong>
+            </mat-error>  
+        </mat-form-field>
+
+        <!-- FECHA INICIO -->
+        <mat-form-field appearance="outline" fxFlex="1 1 auto" style="flex-grow: 1;margin:5px;">
+          <input matInput [matDatepicker]="picker" placeholder="Fecha de inicio" formControlName='initDateInput'>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="filterGroup.controls['initDateInput'].hasError('required')">
+            Este campo es <strong>obligatorio</strong>
+          </mat-error>             
+        </mat-form-field>
+  
+        <!-- FECHA FIN -->
+        <mat-form-field appearance="outline" fxFlex="1 1 auto" style="flex-grow: 1;margin:5px;">
+          <input matInput [matDatepicker]="picker2" placeholder="Fecha de término" formControlName='endDateInput'>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+          <mat-error *ngIf="filterGroup.controls['endDateInput'].hasError('required')">
+            Este campo es <strong>obligatorio</strong>
+          </mat-error>    
+  
+        </mat-form-field>
+
+        <span fxFlex="1 1 auto" style="flex-grow: 1;">
+            <button  [disabled]="!filterGroup.valid"   style="height: 40px;width: 100%;" mat-raised-button color="primary"
+            (click)="loadDataWithFilter()">
+            <mat-icon>search</mat-icon>
+            </button>
+        </span>
+
+
+    </div>
+    
+    <div [hidden]="!(filterGroup.controls['cellarInput']?.value)" fxLayout="row" fxLayoutAlign="space-around center" style="width: 100%;" >
+
+      <span fxFlex="1 1 auto">
+          <supplying-article-autocomplete
+          [origin]="filterGroup.controls['cellarInput']?.value"
+          [institution]="currentInstitution"
+          formControlName="codeArticleInput">
+        </supplying-article-autocomplete>
+      </span>
+
+
+
+    </div>
+
+
+
+
+  </form>
+
+  <div *ngIf="isLoading">
+    <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+  </div>
+
+  <div *ngIf="this.results.length < 1">
+    <h3 style="text-align: center;">
+      No hay resultados.
+    </h3>
+  </div>
+
+  <mat-table *ngIf="!isLoading && this.results.length > 0" [class.isMobile]="isMobile" [dataSource]="dataSource">
+
+    <!-- Position Column -->
+    <ng-container cdkColumnDef="origin">
+      <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+        {{ 'SUPPLYING.ARTICLE._ORIGIN_' | translate }}</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <span class="mobile-label blue">{{ 'SUPPLYING.ARTICLE._ORIGIN_' | translate }}:</span>
+        {{element.origin}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="destination">
+      <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+        {{ 'SUPPLYING.ARTICLE._DESTINATION_' | translate }}</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <span class="mobile-label blue">{{ 'SUPPLYING.ARTICLE._DESTINATION_' | translate }}:</span>
+        {{element.destination}}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="movement_type">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.ARTICLE._MOVEMENT_TYPE_' | translate }}
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data">
+          <span class="mobile-label blue">{{ 'SUPPLYING.ARTICLE._MOVEMENT_TYPE_' | translate }}:</span>
+          {{element.movement_type}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="n_order">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.ARTICLE._N_ORDER_' | translate }}
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+          <p class="table-data" style="width: 90%;">
+              <span class="mobile-label blue"></span>
+              <app-order-info [AllowDispatch]="false" [order]="element.n_order" [id]="element.movement_id"  [detailRoute]="'dispatches'" *ngIf="element.movement_id != undefined"></app-order-info>
+            </p>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Position Column -->
+    <ng-container cdkColumnDef="entry_stock">
+      <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+        {{ 'SUPPLYING.ARTICLE._ENTRY_STOCK_' | translate }}</mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        
+        <p class="table-data" matTooltip="El stock entra a {{element.destination}}">
+          <span class="mobile-label blue">{{ 'SUPPLYING.ARTICLE._ENTRY_STOCK_' | translate }}:</span>
+            {{element.entry_stock}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container cdkColumnDef="exit_stock">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.ARTICLE._EXIT_STOCK_' | translate }}
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data" matTooltip="El stock sale de {{element.origin}}">
+          <span class="mobile-label blue">{{ 'SUPPLYING.ARTICLE._EXIT_STOCK_' | translate }}:</span>
+          {{element.exit_stock}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="movement_date">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.ARTICLE._MOVEMENT_DATE_' | translate }}
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data">
+          <span class="mobile-label blue">{{ 'SUPPLYING.ARTICLE._MOVEMENT_DATE_' | translate }}:</span>
+              {{element.movement_date | date:'d/M/yyyy HH:mm'}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="stock">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.ARTICLE._STOCK_' | translate }}
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data">
+          <span class="mobile-label blue">{{ 'SUPPLYING.ARTICLE._STOCK_' | translate }}:</span>
+          {{element.stock}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container cdkColumnDef="created_at">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef>{{ 'SUPPLYING.PURCHASE_ORDER._CREATED_' | translate }}
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <p class="table-data">
+          <span class="mobile-label blue">{{ 'SUPPLYING.PURCHASE_ORDER._CREATED_' | translate }}:</span>
+          {{element.created_at| date:'shortDate'}}
+        </p>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="actions">
+      <mat-header-cell md-sort-header *cdkHeaderCellDef> </mat-header-cell>
+      <mat-cell *cdkCellDef="let element">
+        <span class="mobile-label blue"><b>Opciones:</b></span>
+        <button mat-button color="primary"
+          routerLink="/supplying/purchase-orders/detail/{{element.code}}">Detalle</button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator [length]="pageNumber" [hidePageSize]="true" [pageSizeOptions]="[10]" (page)="loadPageData(page)"
+    showFirstLastButtons></mat-paginator>
+
+</div>

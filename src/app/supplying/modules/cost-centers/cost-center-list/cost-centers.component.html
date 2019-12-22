@@ -1,0 +1,85 @@
+<button *ngIf="createPrevilege" routerLink="/supplying/cost-centers/create" mat-button color="primary"
+  style="float:right;">
+  <mat-icon>add</mat-icon>Crear centro de costo
+</button>
+
+<div *ngIf="isLoadingData" style="min-height: 400px;">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoadingData" style="min-height: 400px;margin: 15px;margin-top: 50px;">
+
+  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="cost-center-tree">
+    <!-- This is the tree node template for leaf nodes -->
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+      <li class="mat-tree-node">
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <button mat-icon-button disabled></button>
+
+        <span class="costcenter" style="width: 90%;padding-left: 10px;">
+          <mat-card class="description-card-container">
+            <span style="display: flex; width: 100%;">
+              <h3 routerLink="/supplying/cost-centers/detail/{{node.id}}" style="flex-grow: 1;cursor: pointer;">
+                {{node.name}}</h3>
+
+              <mat-chip-list matTooltip="Código PERC" *ngIf="node.perc_name" style="height: fit-content !important;">
+                <div class="md-chips" style="width: fit-content !important;">
+                  <div class="md-chip" style="width: fit-content !important;">
+                    {{node.perc_name}}
+                  </div>
+                </div>
+              </mat-chip-list>
+
+              <span style="min-width: 150px;">
+                <seis-yesno [show-text]="true" [status]="node.is_active"></seis-yesno>
+              </span>
+
+            </span>
+          </mat-card>
+        </span>
+
+      </li>
+    </mat-tree-node>
+    <!-- This is the tree node template for expandable nodes -->
+    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+      <li>
+        <div class="mat-tree-node">
+          <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
+            <mat-icon class="mat-icon-rtl-mirror">
+              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+          </button>
+          <span class="costcenter" style="width: 90%;padding-left: 10px;">
+            <mat-card class="description-card-container">
+              <span style="display: flex; width: 100%;">
+                <h3 routerLink="/supplying/cost-centers/detail/{{node.id}}" style="flex-grow: 1;cursor: pointer;">
+                  {{node.name}}</h3>
+
+                <mat-chip-list matTooltip="Código PERC" *ngIf="node.perc_name" style="height: fit-content !important;">
+                  <div class="md-chips" style="width: fit-content !important;">
+                    <div class="md-chip" style="width: fit-content !important;">
+                      {{node.perc_name}}
+                    </div>
+                  </div>
+                </mat-chip-list>
+
+                <span style="min-width: 150px;">
+                  <seis-yesno [show-text]="true" [status]="node.is_active"></seis-yesno>
+                </span>
+
+              </span>
+            </mat-card>
+          </span>
+
+        </div>
+        <ul [class.cost-center-tree-invisible]="!treeControl.isExpanded(node)">
+          <ng-container matTreeNodeOutlet></ng-container>
+
+        </ul>
+
+      </li>
+    </mat-nested-tree-node>
+  </mat-tree>
+
+
+</div>

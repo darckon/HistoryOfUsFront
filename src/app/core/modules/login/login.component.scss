@@ -1,0 +1,32 @@
+.full-width {
+    width: 100%;
+  }
+ 
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.col 
+{
+  flex: 1;
+  margin-right: 15px;
+}
+
+.col2
+{
+  flex: 1;
+  margin-right: 15px;
+}
+  
+.login-card
+{
+  padding-top:10px !important;
+}

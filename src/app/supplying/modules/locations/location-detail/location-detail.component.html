@@ -1,0 +1,111 @@
+<div *ngIf="isLoading">
+  <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading && locationData">
+  <form [formGroup]="formGroup">
+
+    <mat-card *ngIf="!isActive" class="dashboard-card">
+      <mat-card-header class="mat-card-header-error">
+        <mat-card-title aria-label>
+          Ubicación desactivada
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content *ngIf="editModule" class="dashboard-card-content">
+        <span fxLayout="row" style="margin-top:5px;">
+          <button (click)="toggleStatus()" style="width: 100%;" mat-raised-button color="primary">
+            <mat-icon>done</mat-icon> Activar ubicación
+          </button>
+        </span>
+      </mat-card-content>
+    </mat-card>
+
+    <span *ngIf="isActive">
+
+      <mat-card class="inner-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-slide-toggle (click)="activeEditMode();"></mat-slide-toggle>
+            Datos ubicación
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content style="padding:15px;">
+          <div class="order-container">
+
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+              <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                <input appearance="outline" class="mobile-form-input" formControlName="name" matInput
+                  placeholder="Nombre">
+                <mat-error *ngIf="formGroup.controls['name'].hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                <mat-label>Tipo de ubicación(*) </mat-label>
+                <mat-select [compareWith]="compareFn" formControlName="location_type">
+
+                  <mat-option>
+                    Sin selección
+                  </mat-option>
+
+
+                  <mat-option *ngFor="let loc of locationTypes" [value]="loc">
+                    {{loc.name}}
+                  </mat-option>
+
+
+                </mat-select>
+                <mat-error *ngIf="formGroup.controls['location_type']?.hasError('required')">
+                  Este campo es <strong>obligatorio</strong>
+                </mat-error>
+
+              </mat-form-field>
+
+            </span>
+
+            <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+              <mat-checkbox class="margin" value="false" formControlName="receive_from_provider">
+                ¿Recibe de proveedor?
+              </mat-checkbox>
+              <mat-checkbox class="margin" value="false" formControlName="can_dispatch_to_cellar">
+                ¿Puede despachar a bodega?
+              </mat-checkbox>
+              <mat-checkbox class="margin" value="false" formControlName="can_dispatch_to_cost_center">
+                ¿Puede despachar a centro de costo?
+              </mat-checkbox>
+              <mat-checkbox class="margin" value="false" formControlName="can_dispatch_to_patien">
+                ¿Puede despachar a paciente?
+              </mat-checkbox>
+            </span>
+
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="editMode" class="inner-card">
+        <mat-card-content style="padding:15px;">
+          <span fxLayout="row">
+            <button [disabled]="formGroup.invalid" style="width: 100%;" (click)="edit()" mat-stroked-button
+              color="accent">
+              <mat-icon>create</mat-icon> Actualizar ubicación
+            </button>
+          </span>
+          <span fxLayout="row" style="margin-top:15px;">
+            <button (click)="toggleStatus()" class="red-button" mat-raised-button color="secondary">
+              <mat-icon>cancel</mat-icon> Desactivar ubicación
+            </button>
+          </span>
+
+        </mat-card-content>
+      </mat-card>
+
+    </span>
+
+
+
+
+  </form>
+</div>

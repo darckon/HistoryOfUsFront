@@ -1,0 +1,77 @@
+{
+    "_CELLAR_": "Keller",
+    "_ARTICLE_": "Artikel",
+    "_SUPPLYING_": "Zuführung",
+    "_SERVICE_": "Servicio",
+    "_PURCHASE_ORDER_": "Bestellung",
+    "_BACK_": "Zurück",
+    "_ORDERS_": "Bestellen",
+    "_MANUAL_PURCHASE_ORDER_": "Manual purchase order",
+    "NAVBAR":{
+        "_HOME_": "Zuhause",
+        "_CLOSE_SESSION_": "Sitzung schließen",
+        "_CHANGE_PROFILE_": "Profil ändern",
+        "_CELLAR_": "Keller",
+        "_ARTICLE_": "Artikel",
+        "_PURCHASE_ORDER_": "Bestellung",
+        "_PURCHASE_ORDER_DETAIL_": "Detail der Bestellung",
+        "_LIST_PURCHASE_ORDERS_": "Bestellliste auflisten",
+        "_CELLAR_ADJUSTMENT_": "Kellerabstimmung",
+        "_LIST_ARTICLE_": "Artikel auflisten",
+        "_BINCARD_": "Bincard",
+        "_ORDERS_": "Bestellen",
+        "_PROCESS_MASSIVE_CODIFICATION_": "Massive Codification",
+        "_MASSIVE_CODDING_DATA_": "Massive Codification",
+        "_ADMINISTRATION_": "Administración",
+        "_LIST_PROVIDER_": "Proveedores",
+        "_LIST_COST_CENTERS": "Centros de costo",
+        "_LIST_LOCATION_": "Ubicaciones",
+        "_LIST_USERS_": "Usuarios",
+        "_LIST_PROVIDERS_": "Proveedores",
+        "_LIST_PROFILES_": "Perfiles de usuario",
+        "_DETAIL_INSTITUTION_": "Institución",
+        "_LIST_AGREEMENT_": "Convenios",
+        "_LIST_COST_CENTERS_": "Centros de costo",
+        "_LIST_LOCATIONS_": "Ubicaciones"
+    },
+    "HOME":{
+        "_DASHBOARD_": "Instrumententafel"
+    },
+    "SUPPLYING":{
+        "PURCHASE_ORDER":{
+            "_CELLAR_": "Keller",
+            "_PURCHASE_ORDERS_": "Bestellung",
+            "_PURCHASE_ORDER_DETAIL_": "Detail der Bestellung",
+            "_CODE_": "Code",
+            "_STATE_": "Zustand",
+            "_COMMENT_": "Anbieter",
+            "_PROVIDER_": "Anbieter",
+            "_AMOUNT_": "Anbieter",
+            "_CREATED_": "Erstellt",
+            "_ENCODE_": "Kodieren",
+            "_ENCODE_EARRINGS_": "Ausstehende Codierung",
+            "_RECEIVE_PURCHASE_ORDER_": "Bestellung erhalten",
+            "_RECORD_": "Aufzeichnung",
+            "_ASSIGN_TO": "Zuweisen zu",
+            "_TRANSFER_REQUESTS_": "Movimientos",
+            "_INTERMEDITATOR_": "Intermediación"
+        },
+        "ARTICLE":{
+            "_BINCARD_": "Bincard",
+            "_CELLAR_": "Cellar",
+            "_ENTRY_STOCK_": "Entry stock",
+            "_EXIT_STOCK_": "Exit stock",
+            "_MOVEMENT_DATE_": "Movement date",
+            "_MOVEMENT_TYPE_": "Movement type",
+            "_STOCK_": "Stock",
+            "_ORIGIN_": "Origin",
+            "_DESTINATION_": "Destination",
+            "_N_ORDER_": "N° order"
+        },
+        "ORDER": {
+            "_REQUESTED_": "REQUESTED",
+            "_TRANSIT_": "IN TRANSIT",
+            "_FINISHED_": "FINISHED"
+        }
+    }
+}

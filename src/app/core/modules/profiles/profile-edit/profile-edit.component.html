@@ -1,0 +1,112 @@
+<mat-card class="dashboard-card">
+  <mat-card-header class="mat-card-blue-header">
+    <mat-card-title aria-label>
+      <h2 class="blue" style="display: inline;"> {{ '_CORE_' | translate | uppercase }} | </h2>
+      <p class="light-green" style="display: inline;">
+        <mat-icon [inline]="true">user</mat-icon>{{'_EDIT_PROFILE_' | translate | uppercase  }}
+      </p>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="dashboard-card-content">
+
+    <div *ngIf="isLoading">
+      <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && dataLoaded">
+
+      <form [formGroup]="formGroup">
+
+
+        <mat-card class="inner-card">
+          <mat-card-header>
+            <mat-card-title>
+              Perfil
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+
+              <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+
+                <mat-form-field appearance="outline" style="margin:5px;flex-grow: 1;">
+                  <mat-label>Name (*)</mat-label>
+                  <input appearance="outline" class="mobile-form-input" formControlName="name" matInput
+                    placeholder="name">
+                  <mat-error *ngIf="formGroup.controls['name'].hasError('required')">
+                    Este campo es <strong>obligatorio</strong>
+                  </mat-error>
+                </mat-form-field>
+
+              </span>
+
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card class="inner-card">
+          <mat-card-header>
+            <mat-card-title>
+              privilegios
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content style="padding:15px;">
+            <div class="order-container">
+
+              <form [formGroup]="previlegieFormGroup">
+
+                <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                  <mat-form-field appearance="outline" style="margin:5px; flex-grow: 1;" class="mobile-form-input">
+                    <mat-label>Privilegios(*) </mat-label>
+                    <mat-select [compareWith]="compareFn" multiple formControlName="previlegie">
+
+                      <mat-optgroup [label]="category.name" *ngFor="let category of categories">
+                        <mat-option selected="0" *ngFor="let previlegie of category.privileges" [value]="previlegie">
+                          {{previlegie.name}}
+                        </mat-option>
+                      </mat-optgroup>
+
+                    </mat-select>
+
+
+                  </mat-form-field>
+
+
+                </span>
+
+                <span fxLayoutAlign="start" style="flex-wrap:wrap;">
+                  <mat-chip-list style="width: 100% !important;margin:15px;">
+
+                    <mat-chip *ngFor="let previlegie of previlegieFormGroup.value.previlegie" selected
+                      class="mat-chip-list-stacked" (removed)="remove(previlegeList,previlegie);">
+                      <span class="info-title" style="color: white;width:100%;">{{previlegie.name}} </span>
+
+                    </mat-chip>
+
+                  </mat-chip-list>
+                </span>
+              </form>
+
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card class="inner-card">
+          <mat-card-content style="padding:15px;">
+            <span fxLayout="row">
+              <button (click)="edit()" style="width: 100%;" mat-raised-button color="accent">
+                <mat-icon>border_color</mat-icon> Modificar perfil
+              </button>
+            </span>
+          </mat-card-content>
+        </mat-card>
+
+      </form>
+
+    </div>
+  </mat-card-content>
+</mat-card>

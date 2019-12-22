@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="homeTitle" datatype="html">
+        <source> Home </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/core/templates/partials/navbar/navbar.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">Header title text</note>
+        <note priority="1" from="meaning">Home title</note>
+      </trans-unit>
+      <trans-unit id="c9b3edf6de53665e5bc68406a59139d68d0c55c5" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{menu.name}}"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/core/templates/partials/navbar/navbar.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <note priority="1" from="description">Title of menu@menuTitle</note>
+        <note priority="1" from="meaning">Menu name</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

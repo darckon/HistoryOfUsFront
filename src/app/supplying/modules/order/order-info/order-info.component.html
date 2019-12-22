@@ -1,0 +1,123 @@
+<ng-template  #popoverContent style="width: 600px;">
+  <div class="title" *ngIf="!isLoading">
+    <h2 class="blue">Número de pedido: <span class="blue">{{order}}</span> </h2>
+    
+  </div>
+
+  <span *ngIf="isLoading">
+      <div class="content">
+          <mat-label style="text-align: center; ">
+              <p style="color:#689FD1">
+                <mat-spinner style="margin:0 auto;" [diameter]="30"></mat-spinner>
+              </p>
+            </mat-label>
+      </div>
+  </span>
+  <span *ngIf="!isLoading">
+    <div *ngIf="dataLoaded == true" class="content">
+
+      <span class="description">
+          <seis-movement-description-card 
+          [location-A]="data.origin_name" 
+          [location-B]="data.destination_name"  
+          [movement]="data.movement_type" >
+        </seis-movement-description-card>
+      </span>
+
+      <span *ngIf="articles.length > 0" style="padding:15px;">
+        
+        <mat-table  [class.isMobile]="isMobile" [dataSource]="dataSource">
+  
+          <ng-container cdkColumnDef="article_code">
+            <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+              {{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }} </mat-header-cell>
+            <mat-cell *cdkCellDef="let element; let rowIndex = index;">
+              <span class="mobile-label blue">{{ 'SUPPLYING.ORDER._ARTICLE_CODE_' | translate }}:</span>
+              <app-article-info [id]="element.article_id" [code]="element.article_code" ></app-article-info>
+
+            </mat-cell>
+          </ng-container>
+      
+          <ng-container cdkColumnDef="article_name">
+            <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+              {{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}</mat-header-cell>
+            <mat-cell *cdkCellDef="let element; let rowIndex = index;" >
+              <span class="mobile-label blue">{{ 'SUPPLYING.ORDER._ARTICLE_NAME_' | translate }}:</span>
+              {{ (element.article_name.length>6)? (element.article_name | slice:0:15)+'..':(element.article_name) }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container cdkColumnDef="quantity">
+            <mat-header-cell fxLayout="row" md-sort-header *cdkHeaderCellDef>
+              {{ 'SUPPLYING.ORDER._QUANTITY_' | translate }}</mat-header-cell>
+            <mat-cell *cdkCellDef="let element; let rowIndex = index;" >
+              <span class="mobile-label blue">{{ 'SUPPLYING.ORDER._QUANTITY_' | translate }}:</span>
+              {{element.quantity}}
+
+            </mat-cell>
+          </ng-container>                  
+
+          <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *cdkRowDef="let row;  let index = index; columns: displayedColumns;"></mat-row>
+        </mat-table>  
+
+      </span>
+          
+
+    </div>
+    <div *ngIf="dataLoaded == false" class="content">
+      <p>No se encontraron datos</p>
+    </div>
+
+    
+
+    <div *ngIf="allowDispatch || allowAuthorize || canAuthorize" class="action" >
+
+      <mat-divider></mat-divider>
+
+      <button *ngIf="allowDispatch && dispatchModule" mat-button style="height: 30px;" color="accent"  target="_blank"  routerLink="/supplying/dispatches/detail/{{movementId}}/" >
+        <mat-icon [inline]="true" >check</mat-icon>Despacharx
+      </button>
+      <button *ngIf="allowAuthorize && !isAuthorized && canAuthorize" mat-button style="height: 30px;" color="accent" (click)="authorize()" >
+        <mat-icon [inline]="true" >check</mat-icon>Autorizar
+      </button>
+      <button *ngIf="allowAuthorize && !isAuthorized && canAuthorize" mat-button style="height: 30px;" color="warn" (click)="cancel()" >
+        <mat-icon [inline]="true" >clear</mat-icon>Cancelar
+      </button>
+      <button *ngIf="ordersModule" mat-button style="height: 30px;" color="primary"  target="_blank"  routerLink="/supplying/{{detailRoute}}/detail/{{movementId}}/" >
+        <mat-icon [inline]="true" >assignment</mat-icon> <p style="display: inline" class="blue">Detalle</p>
+      </button>
+
+
+    </div>
+
+  </span>
+
+
+</ng-template>
+
+
+
+<seis-popover
+style="width: 100%;"
+matTooltip="Clìck para ver más detalles del pedido."
+[popoverContent]="popoverContent"
+[xPosition]="'before'"
+[yPosition]="'above'"
+#popover="seisMatPopover"
+>
+  <span class="seis-popover-link" style="width: 100%;">
+      <mat-chip-list  style="width: 100%;">
+        <div class="md-chips">
+          <div class="md-chip">
+            <div class="md-chip-icon"><mat-icon [inline]="true">subject</mat-icon></div>
+            {{order}}
+          </div>
+        </div>
+      </mat-chip-list>
+  </span>
+</seis-popover>
+
+
+
+

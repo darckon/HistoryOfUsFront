@@ -1,0 +1,62 @@
+<ng-template #popoverContent style="width: 600px;">
+  <div class="title" *ngIf="!isLoading">
+    <h2>Despacho: <span class="blue">#{{dispatch_id}}</span> </h2>
+  </div>
+
+  <span *ngIf="isLoading">
+      <div class="content">
+          <mat-label style="text-align: center; ">
+              <p style="color:#689FD1">
+                <mat-spinner style="margin:0 auto;" [diameter]="30"></mat-spinner>
+              </p>
+            </mat-label>
+      </div>
+  </span>
+  <span *ngIf="!isLoading">
+    <div *ngIf="dataLoaded == true" class="content">
+
+      <mat-divider></mat-divider>
+      
+      <span class="description">
+        <p><b>Fecha despacho:</b> <span class="blue"> {{date |  date:'M/d/yy, h:mm:ss a'}}</span> </p>
+      </span>
+      <br>
+      <seis-movement-dispatch-history [display-dispatch]="false" [display-date]="false" [data]="dispatches"></seis-movement-dispatch-history>      
+
+
+    </div>
+    <div *ngIf="dataLoaded == false || !dispatchModule" class="content">
+      <p>No hay información adicional que mostrar.</p>
+    </div>
+  </span>
+
+
+</ng-template>
+
+
+<seis-popover
+[popoverContent]="popoverContent"
+matTooltip="Clìck para ver más detalles del despacho."
+[xPosition]="'before'"
+[yPosition]="'above'"
+#popover="seisMatPopover"
+>
+  <span class="info-title seis-popover-link">
+    <span class="seis-popover-link" style="width: 100%;">
+        <mat-chip-list  style="width: 100%;">
+          <div class="md-chips">
+            <div class="md-chip" >
+              <div class="md-chip-icon-blue"><mat-icon [inline]="true">call_made</mat-icon></div>
+              {{dispatch_id}}
+            </div>
+          </div>
+        </mat-chip-list>
+    </span>
+              
+
+    
+  </span>
+
+</seis-popover>
+
+
