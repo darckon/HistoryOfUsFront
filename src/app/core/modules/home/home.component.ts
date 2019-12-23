@@ -16,12 +16,9 @@ export class HomeComponent implements OnInit {
 
   currentProfileData: any = null;
   currentInstitution: string = null;
-  graphData: any[] = [];
-  type_chart: string = null;
-  instance_chart: string = null;
-  LineChart = []
-  LineChart2 = []
-  LineChart3 = []
+  escenarios: any;
+
+  isLoading: boolean = false;
 
 
   constructor(
@@ -33,25 +30,22 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    
+    this.isLoading = true;
+    this.start_story();
+
   }
 
   // Comenzar Historia
   start_story()
   {
-    this.homeService.start(this.currentInstitution).subscribe(
+    this.homeService.start().subscribe(
       (successData: any) => {
-        let data = successData.data;
-        data.map(
-          (status) => {
-            this.graphData.push(data);
-            this.type_chart = 'horizontalBar';
-            this.instance_chart = 'lineChart2';
-            this.LineChart2 = this.Graphs.bar_chart(this.type_chart, this.instance_chart, data[0]);
-          }
-        );
+        let data = successData.data[0];
+        this.escenarios = data
+        this.isLoading = false;
       },
       (errorData) => {
+        console.log(errorData)
       },
       () => {
 

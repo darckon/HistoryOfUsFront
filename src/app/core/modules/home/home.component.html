@@ -1,16 +1,18 @@
 <mat-card class="dashboard-card">
   <mat-card-header class="mat-card-blue-header">
     <mat-card-title aria-label>
-      <h2 class="blue" style="display: inline;"> {{ 'HOME._DASHBOARD_' | translate }} </h2>
+      <h2 class="blue" style="display: inline;"> {{ 'HOME._DASHBOARD_' | translate }}  </h2>
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
-
-    <span style="display: flex; flex-wrap: wrap; justify-content: space-between;width: 100%;">
-
+    <div *ngIf="isLoading">
+      <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+    </div>
+    <span *ngIf="!isLoading" style="display: flex; flex-wrap: wrap; justify-content: space-between;width: 100%;">
+      
       <mat-card style="flex-basis:30%; flex-grow: 1;">
         <mat-card-header>
-          <mat-card-title>Historia 1</mat-card-title>
+          <mat-card-title>{{ escenarios.nombre }}</mat-card-title>
         </mat-card-header>
         <mat-card-content style="min-height: 300px;">
           <img src="assets/images/banners/storys/story1.jpg" width="100%" alt="Historia 1">

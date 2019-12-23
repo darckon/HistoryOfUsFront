@@ -5,7 +5,6 @@ import { HomeComponent } from './core/modules/home/home.component';
 
 import { AuthGuard } from './core/modules/guard/auth.guard';
 import { ErrorComponent } from './core/modules/error/error.component';
-import { InstitutionDetailComponent } from './core/modules/institutions/institution-detail/institution-detail.component';
 import { NotificationsComponent } from './core/modules/notifications/notifications.component';
 import { BeginComponent } from './core/modules/begin/begin.component';
 
