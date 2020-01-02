@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../services/auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Chart } from 'chart.js';
-import { HomeService } from '../../services/home/home.service';
+import { HistoryService } from '../../services/history/history.service';
 import { Graphs } from '../../../shared/classes/Graphs';
 
 
@@ -25,20 +24,19 @@ export class HomeComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private userService: AuthService,
-    private homeService: HomeService,
+    private historyService: HistoryService,
     private Graphs: Graphs
   ) { }
 
   ngOnInit() {
     this.isLoading = true;
     this.start_story();
-
   }
 
   // Comenzar Historia
   start_story()
   {
-    this.homeService.start().subscribe(
+    this.historyService.getHistorias().subscribe(
       (successData: any) => {
         let data = successData.data[0];
         this.escenarios = data

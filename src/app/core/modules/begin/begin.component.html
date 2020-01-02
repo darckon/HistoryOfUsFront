@@ -5,12 +5,14 @@
       </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-  
-      <span style="display: flex; flex-wrap: wrap; justify-content: space-between;width: 100%;">
+      <div *ngIf="isLoading">
+        <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+      </div>
+      <span *ngIf="!isLoading && dataLoaded" style="display: flex; flex-wrap: wrap; justify-content: space-between;width: 100%;">
   
         <mat-card style="flex-basis:45%; flex-grow: 1;">
           <mat-card-header>
-            <mat-card-title>Historia 1</mat-card-title>
+            <mat-card-title>{{historias.nombre}}</mat-card-title>
           </mat-card-header>
           <mat-card-content style="min-height: 300px;">
             <img src="assets/images/banners/storys/story1.jpg" width="100%" alt="Historia 1">
@@ -27,17 +29,45 @@
             <mat-card-title>Progreso</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc scelerisque felis dignissim neque rutrum, ac accumsan eros egestas. 
-              Integer commodo ex non dolor ornare accumsan. In placerat condimentum laoreet. Quisque rutrum posuere odio, quis viverra lacus rhoncus quis.
-               Nulla enim urna, laoreet ac odio vel, posuere auctor risus. Sed et velit dui. Donec maximus fermentum massa, eget feugiat orci vulputate non. 
-               Mauris enim augue, facilisis in tristique ut, faucibus a nunc. Suspendisse varius, est in viverra mollis, 
-               lacus augue cursus diam, et varius elit sapien id tortor. Curabitur condimentum tincidunt tincidunt. Mauris consectetur ullamcorper turpis.</p>
-               <p><strong >Unete ahora!</strong></p>
-               <p>
-                <button style="display: block;width: 100%;text-align: left;" mat-button color="primary" routerLink="begin">
-                  <mat-icon>check</mat-icon> Comenzar
-                </button>
-               </p>
+            
+             <form [formGroup]="formGroup">
+              <mat-horizontal-stepper  formArrayName="form">
+                <span *ngFor="let pregunta of preguntas">
+                  <mat-step [formGroupName]="i" *ngFor="let customerGroup of formGroup.controls.form.controls; let i = index">
+                    <ng-template matStepLabel>Step {{i + 1}}</ng-template>
+                      <p>{{pregunta.descripcion}}</p>
+                      <mat-selection-list formControlName="option" #alternativas>
+                        <mat-list-option *ngFor="let alternativa of pregunta.alternativas_set">
+                          {{alternativa.descripcion}}
+                        </mat-list-option>
+                      </mat-selection-list>
+                  <div>
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-button matStepperNext>Siguiente</button>
+                  </div>
+                  </mat-step>
+              </span>
+              </mat-horizontal-stepper>
+            </form>
+
+
+           <!-- <span *ngFor="let pregunta of preguntas">
+              <p>{{pregunta.descripcion}}</p>
+
+              <mat-selection-list #alternativas>
+                <mat-list-option *ngFor="let alternativa of pregunta.alternativas_set">
+                  {{alternativa.descripcion}}
+                </mat-list-option>
+              </mat-selection-list>
+              <p>
+                Options selected: {{alternativas.selectedOptions.selected}}
+              </p>
+            </span>-->
+            <p>
+            <button style="display: block;width: 100%;text-align: left;" mat-button color="primary" routerLink="begin">
+              <mat-icon>keyboard_arrow_right</mat-icon> Siguiente
+            </button>
+            </p>
           </mat-card-content>
         </mat-card>
 
