@@ -6,6 +6,8 @@ import { HistoryService } from '../../services/history/history.service';
 import { CoreConstants } from "../../core-constants";
 import { forkJoin } from 'rxjs';
 import { FormGroup, FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { switchMap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-begin',
@@ -22,12 +24,15 @@ export class BeginComponent implements OnInit {
   preguntas : any[] = [];
 
   formGroup : FormGroup;
-  form: FormArray;
+  options: FormArray;
+
+  optionsList: any[] = [];
 
   constructor(
     private historyService: HistoryService,
     private route: ActivatedRoute,
-    private _formBuilder: FormBuilder) { }
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.isLoading = true;
@@ -44,14 +49,14 @@ export class BeginComponent implements OnInit {
         tasks$.push(this.historyService.getHistorias());
         tasks$.push(this.historyService.getPreguntas(CoreConstants.PREGUNTA_TIPO_PERFIL));
 
+        this.formGroup = this.fb.group({
+          options : this.fb.array([this.init()])
+        }) 
+
         forkJoin(...tasks$).subscribe(
           (results: any) => {
             this.historias = results[0].data[0];
             this.preguntas = results[1].data;
-
-            this.formGroup = this._formBuilder.group({
-              form : this._formBuilder.array([this.init()])
-            }) 
 
             this.isLoading = false;
             this.dataLoaded = true;
@@ -66,12 +71,30 @@ export class BeginComponent implements OnInit {
         this.isLoading = false;
         this.dataLoaded = false;
       });
+
       }
 
   init(){
-    return this._formBuilder.group({
-      option :new FormControl('', [Validators.required]),
+    return this.fb.group({
+      option : ['', [Validators.required]],
     })
+  }
+
+  change(e: any){
+    let option = this.optionsList.find(x => x.option == e.option.value.id);
+    if (!option) {
+      this.optionsList.push({ option: e.option.value.id, otro_dato: 'x' });
+    }
+    else {
+      this.optionsList =  this.optionsList.filter(x => x.option != e.option.value.id);
+      this.snackBar.open("ERROR:" + " El articulo ya está en el listado.", null, {
+        duration: 4000,
+      });
+    }
+  }
+
+  guardarPerfil(){
+    console.log(this.optionsList)
   }
 
 }
