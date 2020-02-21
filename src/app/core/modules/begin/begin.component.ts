@@ -16,14 +16,15 @@ import { MatSnackBar } from '@angular/material';
 })
 export class BeginComponent implements OnInit {
 
-  isLoading : boolean = false;
+  isLoading: boolean = false;
   dataLoaded: boolean = false;
   id: string = "";
 
-  historias : any[] = [];
-  preguntas : any[] = [];
+  historias: any[] = [];
+  preguntas: any[] = [];
+  prologo: any[] = [];
 
-  formGroup : FormGroup;
+  formGroup: FormGroup;
   options: FormArray;
 
   optionsList: any[] = [];
@@ -39,24 +40,25 @@ export class BeginComponent implements OnInit {
     this.chargeData();
   }
 
-  chargeData(){
-    
+  chargeData() {
+
     this.route.paramMap.subscribe(
       (success: any) => {
         this.id = success.params.id;
         var tasks$ = [];
 
         tasks$.push(this.historyService.getHistorias());
-        tasks$.push(this.historyService.getPreguntas(CoreConstants.PREGUNTA_TIPO_PERFIL));
+        tasks$.push(this.historyService.getPrologo());
 
         this.formGroup = this.fb.group({
-          options : this.fb.array([this.init()])
-        }) 
+          options: this.fb.array([this.init()])
+        })
 
         forkJoin(...tasks$).subscribe(
           (results: any) => {
             this.historias = results[0].data[0];
-            this.preguntas = results[1].data;
+            this.prologo = results[1].data[0];
+            console.log(this.prologo)
 
             this.isLoading = false;
             this.dataLoaded = true;
@@ -72,28 +74,28 @@ export class BeginComponent implements OnInit {
         this.dataLoaded = false;
       });
 
-      }
+  }
 
-  init(){
+  init() {
     return this.fb.group({
-      option : ['', [Validators.required]],
+      option: ['', [Validators.required]],
     })
   }
 
-  change(e: any){
+  change(e: any) {
     let option = this.optionsList.find(x => x.option == e.option.value.id);
     if (!option) {
       this.optionsList.push({ option: e.option.value.id, otro_dato: 'x' });
     }
     else {
-      this.optionsList =  this.optionsList.filter(x => x.option != e.option.value.id);
+      this.optionsList = this.optionsList.filter(x => x.option != e.option.value.id);
       this.snackBar.open("ERROR:" + " El articulo ya está en el listado.", null, {
         duration: 4000,
       });
     }
   }
 
-  guardarPerfil(){
+  guardarPerfil() {
     console.log(this.optionsList)
   }
 
