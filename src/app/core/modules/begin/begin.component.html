@@ -26,24 +26,9 @@
             <mat-card-content>
               
               <form [formGroup]="formGroup">
-                <div> {{prologo}} </div>
-                <mat-horizontal-stepper  formArrayName="options">
-                  <span *ngFor="let question of questions">
-                    <mat-step [formGroupName]="i" *ngFor="let customerGroup of formGroup.controls.options.controls; let i = index">
-                      <ng-template matStepLabel>Step {{i + 1}}</ng-template>
-                      <p>{{question.description}}</p>
-                      <mat-selection-list formControlName="option"  (selectionChange)="change($event, question.id)" #option_list>
-                        <mat-list-option *ngFor="let alternativa of question.alternativas_set" [value]="alternativa">
-                          {{alternativa.description}}
-                        </mat-list-option>
-                      </mat-selection-list>
-                      <div>
-                        <button mat-button matStepperPrevious>Atras</button>
-                        <button mat-button matStepperNext>Siguiente</button>
-                      </div>
-                    </mat-step>
-                  </span>
-                </mat-horizontal-stepper>
+               <div [innerHTML]="html">
+
+               </div>
               </form>
 
               <p>

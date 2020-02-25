@@ -19,7 +19,7 @@ export class HistoryService {
   }
 
   getPrologo() {
-    return this.http.get(`${environment.backend_url}/core/api/v1/textos/?capitulo=3`)
+    return this.http.get(`${environment.backend_url}/core/api/v1/texts/?chapter=2`)
   }
 
   getPreguntas(tipo) {

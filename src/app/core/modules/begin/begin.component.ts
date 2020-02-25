@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, SecurityContext } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../services/auth/auth.service';
 import { MovimientosService } from "../../services/movimientos/movimientos.service";
@@ -9,6 +9,7 @@ import { forkJoin } from 'rxjs';
 import { FormGroup, FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
 import { MatSnackBar, MatSelectionList } from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-begin',
@@ -23,7 +24,8 @@ export class BeginComponent implements OnInit {
   id: string = "";
 
   stories : any[] = [];
-  questions : any[] = [];
+  prologo : any[] = [];
+  html: any;
 
   formGroup: FormGroup;
   options: FormArray;
@@ -39,7 +41,8 @@ export class BeginComponent implements OnInit {
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private authService: AuthService,
-    private movementService: MovimientosService) { }
+    private movementService: MovimientosService,
+    private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
     this.isLoading = true;
@@ -63,7 +66,7 @@ export class BeginComponent implements OnInit {
         forkJoin(...tasks$).subscribe(
           (results: any) => {
             this.stories = results[0].data[0];
-            this.questions = results[1].data;
+            this.html = this.sanitizer.bypassSecurityTrustHtml(this.prologo = results[1].data[0].description);
 
             this.isLoading = false;
             this.dataLoaded = true;
