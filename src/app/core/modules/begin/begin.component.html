@@ -21,11 +21,12 @@
     
           <mat-card style="flex-basis:45%; flex-grow: 1;">
             <mat-card-header>
-              <mat-card-title>Progreso</mat-card-title>
+              <mat-card-title>Bienvenido</mat-card-title>
             </mat-card-header>
             <mat-card-content>
               
               <form [formGroup]="formGroup">
+                <div> {{prologo}} </div>
                 <mat-horizontal-stepper  formArrayName="options">
                   <span *ngFor="let question of questions">
                     <mat-step [formGroupName]="i" *ngFor="let customerGroup of formGroup.controls.options.controls; let i = index">

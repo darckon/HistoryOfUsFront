@@ -17,6 +17,7 @@ import { MatSnackBar, MatSelectionList } from '@angular/material';
 })
 export class BeginComponent implements OnInit {
 
+<<<<<<< HEAD
   currentUser: any;
   isLoading : boolean = false;
   dataLoaded: boolean = false;
@@ -24,8 +25,17 @@ export class BeginComponent implements OnInit {
 
   stories : any[] = [];
   questions : any[] = [];
+=======
+  isLoading: boolean = false;
+  dataLoaded: boolean = false;
+  id: string = "";
 
-  formGroup : FormGroup;
+  historias: any[] = [];
+  preguntas: any[] = [];
+  prologo: any[] = [];
+>>>>>>> b7689dd2a299a6e3fd6e8b12124b656f260e0a25
+
+  formGroup: FormGroup;
   options: FormArray;
 
   optionsList: any[] = [];
@@ -54,16 +64,22 @@ export class BeginComponent implements OnInit {
         var tasks$ = [];
 
         tasks$.push(this.historyService.getHistorias());
-        tasks$.push(this.historyService.getPreguntas(CoreConstants.PREGUNTA_TIPO_PERFIL));
+        tasks$.push(this.historyService.getPrologo());
 
         this.formGroup = this.fb.group({
-          options : this.fb.array([this.init()])
-        }) 
+          options: this.fb.array([this.init()])
+        })
 
         forkJoin(...tasks$).subscribe(
           (results: any) => {
+<<<<<<< HEAD
             this.stories = results[0].data[0];
             this.questions = results[1].data;
+=======
+            this.historias = results[0].data[0];
+            this.prologo = results[1].data[0];
+            console.log(this.prologo)
+>>>>>>> b7689dd2a299a6e3fd6e8b12124b656f260e0a25
 
             this.isLoading = false;
             this.dataLoaded = true;
@@ -79,30 +95,40 @@ export class BeginComponent implements OnInit {
         this.dataLoaded = false;
       });
 
-      }
+  }
 
-  init(){
+  init() {
     return this.fb.group({
-      option : ['', [Validators.required]],
+      option: ['', [Validators.required]],
     })
   }
 
+<<<<<<< HEAD
   change(e: any, pregunta:any){
     console.log(this.names_list)
     let option = this.optionsList.find(x => (x.alternativa_id == e.option.value.id));
+=======
+  change(e: any) {
+    let option = this.optionsList.find(x => x.option == e.option.value.id);
+>>>>>>> b7689dd2a299a6e3fd6e8b12124b656f260e0a25
     if (!option) {
       this.optionsList.push({ alternativa_id: e.option.value.id, pregunta_id: pregunta });
     }
     else {
+<<<<<<< HEAD
       console.log(e.option.value.id)
       console.log(pregunta)
       this.optionsList =  this.optionsList.filter(x => x.alternativa_id != e.option.value.id);
+=======
+      this.optionsList = this.optionsList.filter(x => x.option != e.option.value.id);
+>>>>>>> b7689dd2a299a6e3fd6e8b12124b656f260e0a25
       this.snackBar.open("ERROR:" + " El articulo ya está en el listado.", null, {
         duration: 4000,
       });
     }
   }
 
+<<<<<<< HEAD
   guardarPerfil(){
     let formData = {
       usuario: this.currentUser.data.id,
@@ -123,6 +149,10 @@ export class BeginComponent implements OnInit {
         });      
         console.error(error);
       });
+=======
+  guardarPerfil() {
+    console.log(this.optionsList)
+>>>>>>> b7689dd2a299a6e3fd6e8b12124b656f260e0a25
   }
 
 }

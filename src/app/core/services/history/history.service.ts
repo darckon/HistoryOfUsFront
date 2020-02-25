@@ -18,6 +18,10 @@ export class HistoryService {
     return this.http.get(`${environment.backend_url}/core/api/v1/stories/?active=true`)
   }
 
+  getPrologo() {
+    return this.http.get(`${environment.backend_url}/core/api/v1/textos/?capitulo=3`)
+  }
+
   getPreguntas(tipo) {
     return this.http.get(`${environment.backend_url}/core/api/v1/questions/?question_type=${tipo}`)
   }
