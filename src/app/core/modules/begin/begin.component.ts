@@ -17,7 +17,6 @@ import { MatSnackBar, MatSelectionList } from '@angular/material';
 })
 export class BeginComponent implements OnInit {
 
-<<<<<<< HEAD
   currentUser: any;
   isLoading : boolean = false;
   dataLoaded: boolean = false;
@@ -25,15 +24,6 @@ export class BeginComponent implements OnInit {
 
   stories : any[] = [];
   questions : any[] = [];
-=======
-  isLoading: boolean = false;
-  dataLoaded: boolean = false;
-  id: string = "";
-
-  historias: any[] = [];
-  preguntas: any[] = [];
-  prologo: any[] = [];
->>>>>>> b7689dd2a299a6e3fd6e8b12124b656f260e0a25
 
   formGroup: FormGroup;
   options: FormArray;
