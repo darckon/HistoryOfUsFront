@@ -12,7 +12,7 @@
         
           <mat-card style="flex-basis:45%; flex-grow: 1;">
             <mat-card-header>
-              <mat-card-title>{{historias.nombre}}</mat-card-title>
+              <mat-card-title>{{stories.name}}</mat-card-title>
             </mat-card-header>
             <mat-card-content style="min-height: 300px;">
               <img src="assets/images/banners/storys/story1.jpg" width="100%" alt="Historia 1">
@@ -27,17 +27,17 @@
               
               <form [formGroup]="formGroup">
                 <mat-horizontal-stepper  formArrayName="options">
-                  <span *ngFor="let pregunta of preguntas">
+                  <span *ngFor="let question of questions">
                     <mat-step [formGroupName]="i" *ngFor="let customerGroup of formGroup.controls.options.controls; let i = index">
                       <ng-template matStepLabel>Step {{i + 1}}</ng-template>
-                      <p>{{pregunta.descripcion}}</p>
-                      <mat-selection-list formControlName="option"  (selectionChange)="change($event)">
-                        <mat-list-option *ngFor="let alternativa of pregunta.alternativas_set" [value]="alternativa">
-                          {{alternativa.descripcion}}
+                      <p>{{question.description}}</p>
+                      <mat-selection-list formControlName="option"  (selectionChange)="change($event, question.id)" #option_list>
+                        <mat-list-option *ngFor="let alternativa of question.alternativas_set" [value]="alternativa">
+                          {{alternativa.description}}
                         </mat-list-option>
                       </mat-selection-list>
                       <div>
-                        <button mat-button matStepperPrevious>Back</button>
+                        <button mat-button matStepperPrevious>Atras</button>
                         <button mat-button matStepperNext>Siguiente</button>
                       </div>
                     </mat-step>
@@ -46,10 +46,9 @@
               </form>
 
               <p>
-              <button style="display: block;width: 100%;text-align: left;" mat-button color="primary" routerLink="begin">
-                <mat-icon>keyboard_arrow_right</mat-icon> Siguiente
+              <button *ngIf="formGroup.valid" style="display: block;width: 100%;text-align: left;" mat-button color="primary" routerLink="begin" (click)="guardarPerfil()">
+                <mat-icon>keyboard_arrow_right</mat-icon> Guardar
               </button>
-              <button *ngIf="formGroup.valid" mat-button (click)="guardarPerfil()">Guardar</button>
               </p>
             </mat-card-content>
           </mat-card>

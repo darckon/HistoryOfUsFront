@@ -18,7 +18,7 @@ export class HomeService {
   constructor(private http: HttpClient) { }
 
   start() {
-    return this.http.get(`${environment.backend_url}/core/api/v1/historias/?activa=true`)
+    return this.http.get(`${environment.backend_url}/core/api/v1/stories/?active=true`)
   }
 
 }

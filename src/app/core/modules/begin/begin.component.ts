@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../services/auth/auth.service';
+import { MovimientosService } from "../../services/movimientos/movimientos.service";
 import { ActivatedRoute, Router } from '@angular/router';
 import { HistoryService } from '../../services/history/history.service';
 import { CoreConstants } from "../../core-constants";
 import { forkJoin } from 'rxjs';
 import { FormGroup, FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatSelectionList } from '@angular/material';
 
 @Component({
   selector: 'app-begin',
@@ -16,23 +17,29 @@ import { MatSnackBar } from '@angular/material';
 })
 export class BeginComponent implements OnInit {
 
+  currentUser: any;
   isLoading : boolean = false;
   dataLoaded: boolean = false;
   id: string = "";
 
-  historias : any[] = [];
-  preguntas : any[] = [];
+  stories : any[] = [];
+  questions : any[] = [];
 
   formGroup : FormGroup;
   options: FormArray;
 
   optionsList: any[] = [];
 
+  @ViewChild('option_list', {static: true}) private names_list: any;
+
   constructor(
     private historyService: HistoryService,
+    private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar,
+    private authService: AuthService,
+    private movementService: MovimientosService) { }
 
   ngOnInit() {
     this.isLoading = true;
@@ -40,7 +47,7 @@ export class BeginComponent implements OnInit {
   }
 
   chargeData(){
-    
+    this.currentUser = this.authService.getCurrentUserData();
     this.route.paramMap.subscribe(
       (success: any) => {
         this.id = success.params.id;
@@ -55,8 +62,8 @@ export class BeginComponent implements OnInit {
 
         forkJoin(...tasks$).subscribe(
           (results: any) => {
-            this.historias = results[0].data[0];
-            this.preguntas = results[1].data;
+            this.stories = results[0].data[0];
+            this.questions = results[1].data;
 
             this.isLoading = false;
             this.dataLoaded = true;
@@ -80,13 +87,16 @@ export class BeginComponent implements OnInit {
     })
   }
 
-  change(e: any){
-    let option = this.optionsList.find(x => x.option == e.option.value.id);
+  change(e: any, pregunta:any){
+    console.log(this.names_list)
+    let option = this.optionsList.find(x => (x.alternativa_id == e.option.value.id));
     if (!option) {
-      this.optionsList.push({ option: e.option.value.id, otro_dato: 'x' });
+      this.optionsList.push({ alternativa_id: e.option.value.id, pregunta_id: pregunta });
     }
     else {
-      this.optionsList =  this.optionsList.filter(x => x.option != e.option.value.id);
+      console.log(e.option.value.id)
+      console.log(pregunta)
+      this.optionsList =  this.optionsList.filter(x => x.alternativa_id != e.option.value.id);
       this.snackBar.open("ERROR:" + " El articulo ya está en el listado.", null, {
         duration: 4000,
       });
@@ -94,7 +104,25 @@ export class BeginComponent implements OnInit {
   }
 
   guardarPerfil(){
-    console.log(this.optionsList)
+    let formData = {
+      usuario: this.currentUser.data.id,
+      respuestas: this.optionsList
+    };
+
+    this.movementService.create(formData).subscribe(
+      (result)=>{
+        this.snackBar.open("Perfil creado con éxito", null, {
+          duration: 4000,
+        });
+        //this.router.navigateByUrl('/supplying/cost-centers');
+      },
+      (error)=>
+      {
+        this.snackBar.open("Hubo un error al crear el perfil.", null, {
+          duration: 4000,
+        });      
+        console.error(error);
+      });
   }
 
 }
