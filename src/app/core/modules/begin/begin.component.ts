@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, SecurityContext } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../services/auth/auth.service';
 import { MovimientosService } from "../../services/movimientos/movimientos.service";
