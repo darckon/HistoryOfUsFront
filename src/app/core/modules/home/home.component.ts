@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
   // Comenzar Historia
   start_story()
   {
-    this.historyService.getHistorias().subscribe(
+    this.historyService.getCurrentStory().subscribe(
       (successData: any) => {
         let data = successData.data[0];
         this.escenarios = data

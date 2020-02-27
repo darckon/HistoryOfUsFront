@@ -14,11 +14,11 @@ export class HistoryService {
 
   constructor(private http: HttpClient) { }
 
-  getHistorias() {
+  getCurrentStory() {
     return this.http.get(`${environment.backend_url}/core/api/v1/stories/?active=true`)
   }
 
-  getPrologo() {
+  getPrologue() {
     return this.http.get(`${environment.backend_url}/core/api/v1/texts/?chapter=2`)
   }
 

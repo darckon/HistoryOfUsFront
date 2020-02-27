@@ -12,7 +12,7 @@
         
           <mat-card style="flex-basis:45%; flex-grow: 1;">
             <mat-card-header>
-              <mat-card-title>{{stories.name}}</mat-card-title>
+              <mat-card-title>{{story.name}}</mat-card-title>
             </mat-card-header>
             <mat-card-content style="min-height: 300px;">
               <img src="assets/images/banners/storys/story1.jpg" width="100%" alt="Historia 1">
@@ -26,9 +26,21 @@
             <mat-card-content>
               
               <form [formGroup]="formGroup">
-               <div [innerHTML]="html">
+                <!-- Texto inicial -->
+                <div [innerHTML]="initial_text"></div>
+                <div *ngFor="let question of prologue.question_set">
 
-               </div>
+                  <!-- Preguntas -->
+                  <div [innerHTML]="byPassSanitize(question.description)"></div>
+
+                  <!-- Alternativas -->
+                  <mat-selection-list>
+                    <mat-list-option *ngFor="let alternative of question.alternatives_set">
+                      <div [innerHTML]="byPassSanitize(alternative.description)"></div>
+                    </mat-list-option>
+                  </mat-selection-list>
+                  
+                </div>
               </form>
 
               <p>

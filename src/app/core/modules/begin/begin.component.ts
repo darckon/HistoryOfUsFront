@@ -23,9 +23,9 @@ export class BeginComponent implements OnInit {
   dataLoaded: boolean = false;
   id: string = "";
 
-  stories : any[] = [];
-  prologo : any[] = [];
-  html: any;
+  story : any;
+  prologue : any;
+  initial_text: any;
 
   formGroup: FormGroup;
   options: FormArray;
@@ -56,18 +56,16 @@ export class BeginComponent implements OnInit {
         this.id = success.params.id;
         var tasks$ = [];
 
-        tasks$.push(this.historyService.getHistorias());
-        tasks$.push(this.historyService.getPrologo());
-
-        this.formGroup = this.fb.group({
-          options: this.fb.array([this.init()])
-        })
-
+        tasks$.push(this.historyService.getCurrentStory());
+        tasks$.push(this.historyService.getPrologue());
         forkJoin(...tasks$).subscribe(
           (results: any) => {
-            this.stories = results[0].data[0];
-            this.html = this.sanitizer.bypassSecurityTrustHtml(this.prologo = results[1].data[0].description);
+            this.story = results[0].data[0];
+            this.prologue = results[1].data[0];
+            
+            this.select_story(this.story.id, tasks$);
 
+    
             this.isLoading = false;
             this.dataLoaded = true;
           },
@@ -75,6 +73,7 @@ export class BeginComponent implements OnInit {
             console.error(error);
           }
         );
+        
       },
       (error) => {
         console.error(error);
@@ -88,6 +87,24 @@ export class BeginComponent implements OnInit {
     return this.fb.group({
       option: ['', [Validators.required]],
     })
+  }
+
+  select_story(story, tasks$){
+    switch (story) {
+      case CoreConstants.GameOfThrones:
+        
+            this.initial_text = this.byPassSanitize(this.prologue .description);
+            this.formGroup = this.fb.group({
+              options: this.fb.array([this.init()])
+            });
+
+
+
+        break;
+    
+      default:
+        break;
+    }
   }
 
   change(e: any, pregunta:any){
@@ -126,6 +143,12 @@ export class BeginComponent implements OnInit {
         });      
         console.error(error);
       });
+  }
+
+
+  byPassSanitize(text){
+    text = this.sanitizer.bypassSecurityTrustHtml(text);
+    return text
   }
 
 }
