@@ -93,9 +93,9 @@ export class BeginComponent implements OnInit {
     switch (story) {
       case CoreConstants.GameOfThrones:
         
-            this.initial_text = this.byPassSanitize(this.prologue .description);
+            this.initial_text = this.byPassSanitize(this.prologue.description);
             this.formGroup = this.fb.group({
-              options: this.fb.array([this.init()])
+              alternatives: this.fb.array([this.init()])
             });
 
 
@@ -107,26 +107,17 @@ export class BeginComponent implements OnInit {
     }
   }
 
-  change(e: any, pregunta:any){
-    console.log(this.names_list)
-    let option = this.optionsList.find(x => (x.alternativa_id == e.option.value.id));
-    if (!option) {
-      this.optionsList.push({ alternativa_id: e.option.value.id, pregunta_id: pregunta });
-    }
-    else {
-      console.log(e.option.value.id)
-      console.log(pregunta)
-      this.optionsList =  this.optionsList.filter(x => x.alternativa_id != e.option.value.id);
-      this.snackBar.open("ERROR:" + " El articulo ya está en el listado.", null, {
-        duration: 4000,
-      });
-    }
+  change(e: any, question:any){
+    console.log(e)
+    this.optionsList = [];
+    this.optionsList.push({ alternative_id: e.option.value, question_id: question });
+    this.guardarPerfil();
   }
 
   guardarPerfil(){
     let formData = {
-      usuario: this.currentUser.data.id,
-      respuestas: this.optionsList
+      user: this.currentUser.data.id,
+      answers: this.optionsList
     };
 
     this.movementService.create(formData).subscribe(

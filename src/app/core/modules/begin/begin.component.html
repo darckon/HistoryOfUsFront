@@ -34,8 +34,8 @@
                   <div [innerHTML]="byPassSanitize(question.description)"></div>
 
                   <!-- Alternativas -->
-                  <mat-selection-list>
-                    <mat-list-option *ngFor="let alternative of question.alternatives_set">
+                  <mat-selection-list  formArrayName="alternatives"  (selectionChange)="change($event, question.id)">
+                    <mat-list-option *ngFor="let alternative of question.alternatives_set" [value]="alternative.id">
                       <div [innerHTML]="byPassSanitize(alternative.description)"></div>
                     </mat-list-option>
                   </mat-selection-list>
