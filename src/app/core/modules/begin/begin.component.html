@@ -45,7 +45,7 @@
                   <!-- Alternativas tipo input-->
                   <div *ngIf="question.alternative_type == 2">
                     <div *ngFor="let alternative of question.alternatives_set">
-                      <input appearance="outline" class="mobile-form-input" formArrayName="alternatives" matInput [tag]="tesst" [placeholder]="alternative.description" (change)="change($event, question)">
+                      <input appearance="outline" class="mobile-form-input" formArrayName="alternatives" matInput  [placeholder]="alternative.description" (change)="change($event, question)">
                     </div>
                     <button style="display: block;width: 100%;text-align: left;" mat-button color="primary" routerLink="" (click)="guardarPerfil()">
                       <mat-icon>save</mat-icon> Guardar
