@@ -19,12 +19,12 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class BeginComponent implements OnInit {
 
   currentUser: any;
-  isLoading : boolean = false;
+  isLoading: boolean = false;
   dataLoaded: boolean = false;
   id: string = "";
 
-  story : any;
-  prologue : any;
+  story: any;
+  prologue: any;
   initial_text: any;
 
   formGroup: FormGroup;
@@ -32,7 +32,7 @@ export class BeginComponent implements OnInit {
 
   optionsList: any[] = [];
 
-  @ViewChild('option_list', {static: true}) private names_list: any;
+  @ViewChild('option_list', { static: true }) private names_list: any;
 
   constructor(
     private historyService: HistoryService,
@@ -49,7 +49,7 @@ export class BeginComponent implements OnInit {
     this.chargeData();
   }
 
-  chargeData(){
+  chargeData() {
     this.currentUser = this.authService.getCurrentUserData();
     this.route.paramMap.subscribe(
       (success: any) => {
@@ -62,10 +62,10 @@ export class BeginComponent implements OnInit {
           (results: any) => {
             this.story = results[0].data[0];
             this.prologue = results[1].data[0];
-            
+
             this.select_story(this.story.id, tasks$);
 
-    
+
             this.isLoading = false;
             this.dataLoaded = true;
           },
@@ -73,7 +73,7 @@ export class BeginComponent implements OnInit {
             console.error(error);
           }
         );
-        
+
       },
       (error) => {
         console.error(error);
@@ -89,55 +89,57 @@ export class BeginComponent implements OnInit {
     })
   }
 
-  select_story(story, tasks$){
+  select_story(story, tasks$) {
     switch (story) {
-      case CoreConstants.GameOfThrones:
-        
-            this.initial_text = this.byPassSanitize(this.prologue.description);
-            this.formGroup = this.fb.group({
-              alternatives: this.fb.array([this.init()])
-            });
+      case CoreConstants.STORIES_GAMEOFTHRONES:
+
+        this.initial_text = this.byPassSanitize(this.prologue.description);
+        this.formGroup = this.fb.group({
+          alternatives: this.fb.array([this.init()])
+        });
 
 
 
         break;
-    
+
       default:
         break;
     }
   }
 
-  change(e: any, question:any){
+  change(e: any, question: any) {
     console.log(e)
     this.optionsList = [];
-    this.optionsList.push({ alternative_id: e.option.value, question_id: question });
-    this.guardarPerfil();
+    let alternative_value = (question.alternative_type == CoreConstants.ALTERNATIVE_TYPE_STRING) ? e.option.value : e.target.value;
+    this.optionsList.push({ alternative_id: alternative_value, question_id: question.id });
+    console.log(this.optionsList)
+    //this.guardarPerfil();
   }
 
-  guardarPerfil(){
+  guardarPerfil() {
     let formData = {
       user: this.currentUser.data.id,
-      answers: this.optionsList
+      answers: this.optionsList,
+      movement_type: CoreConstants.MOVEMENT_TYPE_INITIAL_CHARACTER_CONFIGURATION
     };
 
     this.movementService.create(formData).subscribe(
-      (result)=>{
+      (result) => {
         this.snackBar.open("Perfil creado con éxito", null, {
           duration: 4000,
         });
         //this.router.navigateByUrl('/supplying/cost-centers');
       },
-      (error)=>
-      {
+      (error) => {
         this.snackBar.open("Hubo un error al crear el perfil.", null, {
           duration: 4000,
-        });      
+        });
         console.error(error);
       });
   }
 
 
-  byPassSanitize(text){
+  byPassSanitize(text) {
     text = this.sanitizer.bypassSecurityTrustHtml(text);
     return text
   }
